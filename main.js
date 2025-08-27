@@ -233,9 +233,8 @@ ipcMain.handle('db:addEmployee', async (event, employeeData) => {
 });
 
 ipcMain.handle('db:addAttendance', async (event, attendanceData) => {
-    const { week_start, week_end, eid, no_of_duties, no_of_days, rate, payment, benefits } = attendanceData;
-    return new Promise((resolve, reject) => {
-        db.addAttendance(week_start, week_end, eid, no_of_duties, no_of_days, rate, payment, benefits, (err, id) => {
+        return new Promise((resolve, reject) => {
+        db.addAttendance(attendanceData, (err, id) => {
             if (err) reject(err);
             else resolve(id);
         });

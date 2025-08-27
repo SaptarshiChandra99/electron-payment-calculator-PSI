@@ -93,21 +93,28 @@
 
                 </div>
                 <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="overtime">Overtime (hours):</label>
+                        <input type="number" id="overtime" step=".001" min="0" value="0" required >
+                    </div>
                     
                     <div class="form-group">
                         <label for="rate">Rate:</label>
                         <input type="number" id="rate" step="1" min="0" required >
                     </div>
+                    
                     <div class="form-group">
-                        <label for="overtime">Overtime (hours):</label>
-                        <input type="number" id="days" step=".001" min="0" value="0" required >
-                    </div>
-                    <div class="form-group">
-                        <label for="basic">Basic Pay:</label>
-                        <input type="number" id="basic" step=".5" min="0" required >
+                        <label for="amount-to-pay">Basic Pay:</label>
+                        <input type="number" id="amount-to-pay" step=".5" min="0" required >
                     </div>
                 </div>
-
+                <div class="form-row">
+                    <div class="form-group">
+                         <label for="remarks">remarks:</label>
+                        <input type="text" id="remarks" >
+                    </div>
+                </div>
 
                
                 <div id="attendance-error" class="error-message"></div>
@@ -160,8 +167,7 @@
 
             <div id = "record-details" style="margin: .5rem;">
                 Number of Records: <span id="record-count">0</span>
-                Total Amount: <span id = 'total' style="display: none;"></span>
-                Total Benefits: <span id = 'total-benefits' style="display: none;"></span>
+                
                 Total Amount to be paid: <span id="total-amount">0.00</span>
 
                 
@@ -175,10 +181,8 @@
                         <th>Employee Name</th>
                         <th>Week Range</th>
                         <th>Days</th>
-                        <th>Duties</th>
+                        <th>OT(h)</th>
                         <th>Rate</th>
-                        <th>Payment</th>
-                        <th>Benefits</th>
                         <th>Payable Amount</th>
                         <th>Actions</th>  
                     </tr>

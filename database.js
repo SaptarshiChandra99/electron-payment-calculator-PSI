@@ -58,6 +58,7 @@ db.serialize(() => {
             rate REAL NOT NULL,
             overtime REAL NOT NULL,
             amount_to_pay REAL NOT NULL,
+            remarks TEXT,
             FOREIGN KEY (eid) REFERENCES employees(eid),
             UNIQUE (week_start, week_end, eid)
         )
@@ -425,10 +426,11 @@ function addEmployee(fullname, nickname, mobile_no, position, rate_6, rate_7, ha
  * @returns {Promise<number>} The ID of the newly created attendance record
  * @throws {Error} If database operation fails or validation fails
  */
-function addAttendance(week_start, week_end ,eid, no_of_duties, no_of_days,rate, payment, benefits, callback) {
+function addAttendance(attendanceData, callback) {
+    const { week_start,week_end, eid, no_of_days,rate, overtime,amount_to_pay,remarks } = attendanceData;
     db.run(
-        'INSERT INTO weekly_payments (week_start,week_end , eid, no_of_duties, no_of_days,rate, payment, benefits) VALUES (?, ?, ?, ?, ?, ? , ?, ?)',
-        [week_start,week_end, eid, no_of_duties, no_of_days,rate, payment, benefits],
+        'INSERT INTO weekly_payments (week_start,week_end , eid, no_of_days,rate,overtime,amount_to_pay,remarks) VALUES (?, ?, ?, ?, ?, ? , ?, ?)',
+        [week_start,week_end, eid, no_of_days,rate, overtime,amount_to_pay,remarks],
         function(err) {
             callback(err, this.lastID);
         }
@@ -451,15 +453,15 @@ ORDER BY wa.week_start DESC
 }
 
 function updateWeeklyPaymentRecord(data,callback){
-    const { attendanceId, week_start, week_end, eid, no_of_duties, no_of_days, rate, payment, benefits } = data;
+    const { attendanceId, week_start, week_end, eid, no_of_days, rate, overtime, amount_to_pay,remarks } = data;
 
-    console.log('Updating weekly attendance record:', { attendanceId, week_start, week_end, eid, no_of_duties, no_of_days, rate, payment, benefits });
+    console.log('Updating weekly payments record:', { attendanceId, week_start, week_end, eid, no_of_days, rate, overtime, amount_to_pay,remarks });
 
     db.run(
         `UPDATE weekly_payments 
-         SET week_start = ?, week_end = ?, eid = ?, no_of_duties = ?, no_of_days = ?, rate = ?, payment = ?, benefits = ? 
+         SET week_start = ?, week_end = ?, eid = ?, no_of_days = ?, rate = ?, amount_to_pay = ?, overtime = ? ,remarks = ?
          WHERE attendance_id = ?`,
-        [week_start, week_end, eid, no_of_duties, no_of_days, rate, payment, benefits, attendanceId],
+        [week_start, week_end, eid, no_of_days, rate, amount_to_pay, overtime,remarks, attendanceId],
         function(err) {
             if (err) return callback(err);
             // Return the number of affected rows

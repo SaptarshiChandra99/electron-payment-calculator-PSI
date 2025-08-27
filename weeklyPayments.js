@@ -13,15 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM elements
     const attendanceForm = document.getElementById('attendance-form');
     const employeeDropdown = document.getElementById('employee');
-    const dutyDaysInput = document.getElementById('dutydays');
-    const hoursInput = document.getElementById('hours');
     const daysInput = document.getElementById('days');
+    const rateInput = document.getElementById('rate');
+    const overtimeInput = document.getElementById('overtime');
+    const amountToPay = document.getElementById('amount-to-pay');
     const weekStartInput = document.getElementById('week-start');
     const weekEndInput = document.getElementById('week-end');
     const filterYear = document.getElementById('filter-year');
     const filterMonth = document.getElementById('filter-month');
     const filterWeek = document.getElementById('filter-week');
     const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const remarksInput = document.getElementById('remarks');
 
     // Validate DOM elements
     const requiredElements = [attendanceForm, employeeDropdown, daysInput, weekStartInput, weekEndInput, filterYear, filterMonth, filterWeek, cancelEditBtn];
@@ -51,18 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
         weekEndInput.value = end;
     }
 
-    function calculateHours() {
-        const daysWorked = parseFloat(dutyDaysInput.value);
-        if (isNaN(daysWorked) || daysWorked < 0) {
-            hoursInput.value = '';
-            return;
-        }
-        hoursInput.value = (daysWorked * HOURS_PER_DAY).toFixed(2);
-    }
+    // function calculateHours() {
+    //     const daysWorked = parseFloat(dutyDaysInput.value);
+    //     if (isNaN(daysWorked) || daysWorked < 0) {
+    //         hoursInput.value = '';
+    //         return;
+    //     }
+    //     hoursInput.value = (daysWorked * HOURS_PER_DAY).toFixed(2);
+    // }
 
     async function calculatePayment() {
-        const daysWorked = parseFloat(dutyDaysInput.value);
-        const noOfDays = parseFloat(daysInput.value);
+        const daysWorked = parseFloat(daysInput.value);
+        const overtime = parseFloat(overtimeInput.value);
         const selectedEmployeeId = employeeDropdown.value;
 
         // Clear previous error
@@ -74,14 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         if (isNaN(daysWorked) || daysWorked < 0) {
-            document.getElementById('attendance-error').textContent = 'Duty days must be a non-negative number.';            return;
-        }
-        if (isNaN(noOfDays) || noOfDays < 0) {
             document.getElementById('attendance-error').textContent = 'Number of days must be a non-negative number.';
-            return;
-        }
-        if (daysWorked < noOfDays) {
-            document.getElementById('attendance-error').textContent = 'Duty days cannot be less than the number of days worked.';
             return;
         }
 
@@ -93,13 +88,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const rate = daysWorked < 7 ? employeeDetails.rate_6 : employeeDetails.rate_7;
             const payment = daysWorked * rate;
-            const benefits = employeeDetails.has_benefits ? Math.min(noOfDays, MAX_BENEFIT_DAYS) * BENEFIT_AMOUNT : 0;
-            const amountToPay = payment - benefits;
+            const overtimePay =  (overtime / 12) * rate;
 
-            document.getElementById('rate').textContent = rate.toFixed(2);
-            document.getElementById('total-payment').textContent = payment.toFixed(2);
-            document.getElementById('pf-esi').textContent = benefits.toFixed(2);
-            document.getElementById('amount-to-pay').textContent = amountToPay.toFixed(2);
+            rateInput.value = rate;
+            amountToPay.value = Math.round(payment + overtimePay);
+
+
+            // document.getElementById('rate').textContent = rate.toFixed(2);
+            // document.getElementById('total-payment').textContent = payment.toFixed(2);
+            // document.getElementById('pf-esi').textContent = benefits.toFixed(2);
+            // document.getElementById('amount-to-pay').textContent = amountToPay.toFixed(2);
         } catch (error) {
             console.error('Error calculating payment:', error);
             showMessageBox(`Error calculating payment: ${error.message}`, 'Error');
@@ -157,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function loadAllEmployees() {         loadItems('employee' , 'Labour');     }
+    async function loadAllEmployees() {         loadItems('employee' , 'labour');     }
 
     async function loadYearFilters(defaultYear = '') {
         try {
@@ -261,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${record.no_of_days}</td>
                     <td>${record.overtime.toFixed(2)}</td>
                     <td>${record.rate.toFixed(2)}</td>
-                    <td>${record.benefits.toFixed(2)}</td>
                     <td>${record.amount_to_pay.toFixed(2)}</td>
                     <td>
                         <button class="delete-btn" data-id="${record.attendance_id}"><i class="fas fa-close"></i></button>
@@ -316,6 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const yearFilter = filterYear.value;
                     const monthFilter = filterMonth.value;
                     await loadRecords(weekFilter, yearFilter, monthFilter);
+                    await loadEmployees();
                     showMessageBox('Record deleted successfully.', 'Success');
                 }
             } catch (error) {
@@ -326,19 +324,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function clearPaymentDisplay() {
-        document.getElementById('total-payment').textContent = '0.00';
-        document.getElementById('pf-esi').textContent = '0.00';
-        document.getElementById('amount-to-pay').textContent = '0.00';
-        document.getElementById('rate').textContent = '0.00';
+        
+        document.getElementById('overtime').value = '0.00';
+        document.getElementById('amount-to-pay').value = '0.00';
+        document.getElementById('rate').value = '0.00';
+        remarksInput.value = '';
         daysInput.value = '';
-        dutyDaysInput.value = '';
-        hoursInput.value = '';
         document.getElementById('attendance-error').textContent = '';
     }
 
     async function editWeeklyPaymentsRecord(wpId) {
         try {
-            const record = await window.electronAPI.getRecordById(wpId, 'weekly_attendance', 'attendance_id');
+            const record = await window.electronAPI.getRecordById(wpId, 'weekly_payments', 'attendance_id');
             if (!record || !record.eid) {
                 showMessageBox('Weekly payment record not found.', 'Error');
                 return;
@@ -363,8 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             weekStartInput.value = record.week_start;
             weekEndInput.value = record.week_end;
-            dutyDaysInput.value = record.no_of_duties;
             daysInput.value = record.no_of_days;
+            overtimeInput.value = record.overtime;
+            remarksInput.value = record.remarks;
 
             await calculatePayment();
 
@@ -377,15 +375,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event listeners
-    dutyDaysInput.addEventListener('input', () => {
-        calculateHours();
+    daysInput.addEventListener('input', () => {
         calculatePayment();
     });
+    overtimeInput.addEventListener('input' , () =>{ calculatePayment(); })
     employeeDropdown.addEventListener('change', () => {
-        clearPaymentDisplay();
+        
         calculatePayment();
     });
-    daysInput.addEventListener('input', calculatePayment);
 
     weekStartInput.addEventListener('change', async () => {
         const startDate = new Date(weekStartInput.value);
@@ -433,13 +430,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const employeeId = employeeDropdown.value;
         const weekStart = weekStartInput.value;
         const weekEnd = weekEndInput.value;
-        const dutyDays = parseFloat(dutyDaysInput.value);
         const days = parseFloat(daysInput.value);
-        const rate = parseFloat(document.getElementById('rate').textContent);
-        const payment = parseFloat(document.getElementById('total-payment').textContent);
-        const benefits = parseFloat(document.getElementById('pf-esi').textContent);
-
-        if (!employeeId || isNaN(dutyDays) || isNaN(days) || isNaN(rate) || isNaN(payment) || isNaN(benefits)) {
+        const rate = rateInput.value;
+        const overtime = parseFloat(overtimeInput.value);
+        const amount_to_pay = parseFloat(document.getElementById('amount-to-pay').value);
+        const remarks = remarksInput.value;
+       
+        if (!employeeId || isNaN(days) || isNaN(rate) || isNaN(overtime) || isNaN(amount_to_pay)) {
             showMessageBox('Please fill all required fields with valid data.', 'Error');
             return;
         }
@@ -450,11 +447,11 @@ document.addEventListener('DOMContentLoaded', () => {
             eid: employeeId,
             week_start: weekStart,
             week_end: weekEnd,
-            no_of_duties: dutyDays,
             no_of_days: days,
             rate,
-            payment,
-            benefits
+            amount_to_pay,
+            overtime,
+            remarks
         };
 
         try {
