@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Employee - Attendance System</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- <script src="preload.js"></script> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Custom Title Bar (Copied from index.html) -->
+    <div id="custom-title-bar">
+        <div class="title-bar-left">
+            <button id="app-icon-btn" class="title-bar-button">
+                <i class="fas fa-bars app-icon"></i>
+            </button>
+            <span class="app-title">Attendance System</span>
+        </div>
+        <div class="title-bar-right">
+            <button id="minimize-btn" class="title-bar-button"><i class="fas fa-minus"></i></button>
+            <button id="maximize-btn" class="title-bar-button"><i class="fas fa-square"></i></button>
+            <button id="close-btn" class="title-bar-button close-button"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- Sidebar Menu (Copied from index.html) -->
+    <div id="sidebar-menu">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button id="sidebar-close-btn" class="sidebar-close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#" data-tab-target="attendance" data-page-target="attendance.html"><i class="fa-solid fa-user"></i> Take Attendance</a></li>
+            <li><a href="#" data-page-target="index.html" data-tab-name="weekly-payemnts"><i class="fas fa-users"></i> Employees Weekly Payments</a></li>
+            <li><a href="#" data-page-target="loading-unloading.html"><i class="fas fa-truck-loading"></i> Loading/Unloading Payments</a></li>
+            <li><a href="#" data-page-target="packing.html"><i class="fas fa-box-open"></i> Packing Payments</a></li>
+            <li><a href="#" data-page-target="bull-block.html"><i class="fas fa-cube"></i> Bull Block Payments</a></li>
+            <li><a href="#" data-page-target="add-employee.html"><i class="fas fa-user-plus"></i> Add Employee</a></li>
+            <li><a href="#" data-page-target="bhati.html"><i class="fa-solid fa-fire"></i> Bhati Paymemnts</a></li>
+            <li><a href="#" data-page-target="overtime.html"><i class="fa-solid fa-clock"></i> Overtime Paymemnts</a></li>
+            <li><a href="#" data-tab-target="miscellaenous" data-page-target="miscellaenous.html"><i class="fa-solid fa-toolbox"></i> Miscellaenous</a></li>
+            <li><a href="#" data-page-target="driver.html" data-tab-name="driver"><i class="fa-solid fa-truck"></i>Driver Payments</a></li>
+            <li><a href="#" data-page-target="view-details.html" data-tab-name="view-records"><i class="fas fa-file-invoice"></i> View Records</a></li>
+        </ul>
+    </div>
+
+    <!-- Overlay for when sidebar is open (Copied from index.html) -->
+    <div id="sidebar-overlay"></div>
+
+    <div class="container">
+        <!-- Content for Add New Employee -->
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="add-employee">Add Employee</button>
+            <!-- <button class="tab-btn" data-tab="add-employee">Add Employee</button> -->
+            <button class="tab-btn" data-tab="view-employee">View Records</button>
+            <button class="tab-btn" data-tab="update-employee">Update Employee</button>
+
+             <button id="theme-toggle" class="theme-toggle-btn" style="margin-left: auto;">Toggle Theme</button>
+        </div>
+
+        <div id="add-employee" class="tab-content active">
+            <h2>Add New Employee</h2>
+            
+            <form id="employee-form">
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="fullname">Full Name:</label>
+                        <input type="text" id="fullname" value = 'dummy' required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nickname">Nick Name:</label>
+                        <input type="text" id="nickname" required>
+                    </div>
+                
+                </div>
+                
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="mobile">Mobile Number:</label>
+                        <input type="tel" id="mobile" value="dummy no" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Position:</label>
+                        <input type="text" id="position" value="labour" required>
+                        <!-- <select id="position" value="labour" required>
+                            <option value="Labour">Labour</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Bull Block">Bull Block</option>
+                            <option value="Draw Machine">Draw Machine</option>
+                        </select> -->
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="rate6">Daily Rate 6 days:</label>
+                        <input type="number" id="rate6" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rate7">Daily Rate 7 days:</label>
+                        <input type="number" id="rate7" step="0.01" required>
+                    </div>
+
+                </div>
+                
+                <div class="form-row">
+
+                    <div class="form-group" >
+                        <label for="benefits">Has Benefits:
+                        <input type="checkbox" id="benefits">
+                        </label>
+                    </div>
+
+                </div>
+
+                
+                <button type="submit" class="btn btn-primary">Add Employee</button>
+            </form>
+        </div>
+
+        <div id="view-employee" class="tab-content">
+            <h2>Employee Records</h2>
+            <!-- </div class="form-group"> -->
+                <!-- <label for="filter-week">Filter by Employee:</label>
+                <select id="filter-week">
+                    <option value="">All week</option>
+                    
+                </select> -->
+            <!-- </div> -->
+
+            <div class="filter-controls">
+                <div class="form-group">
+                    <label for="filter-position">Position:</label>
+                    <select id="filter-position">
+                        <option value="">All Position</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filter-name">Name:</label>
+                    <select id="filter-name">
+                        <option value="">All employees</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id = "record-details" style="margin: .5rem;">
+                Number of Records: <span id="record-count">0</span>
+            </div>
+            <button id="export-excel" class="export-btn">Excel</button>
+            <button id="export-pdf-btn" class="export-btn" style="margin-left: 10px;">PDF</button>
+            <table id="records-table">
+                <thead>
+                    <tr>
+                        <th>SrNo</th>
+                        <!-- <th>Employee Name</th> -->
+                        <th>Nickname</th>
+                        <th>Mobile No</th>
+                        <th>Position</th>
+                        <th>Rate_6</th>
+                        <th>Rate_7</th>
+                        <th>Benefits</th>
+                        <th>Active</th>
+                        <th>Actions</th>  
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+
+        </div>
+        <div id="update-employee" class="tab-content">
+            <h2>Update Employee</h2>
+            <form id="update-employee-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="update-employee-dropdown">Select Employee:</label>
+                        <select id="update-employee-dropdown" required>
+                            <option value="">Select Employee</option>
+                            <!-- Options will be dynamically populated from the database -->
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="fullname">Full Name:</label>
+                        <input type="text" id="update-fullname">
+                    </div>
+                    <div class="form-group">
+                        <label for="nickname">Nick Name:</label>
+                        <input type="text" id="update-nickname">
+                    </div>
+                
+                </div>
+                
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="mobile">Mobile Number:</label>
+                        <input type="tel" id="update-mobile" >
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Position:</label>
+                        <input type="text" id="update-position" >
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="rate6">Daily Rate 6 days:</label>
+                        <input type="number" id="update-rate6" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="rate7">Daily Rate 7 days:</label>
+                        <input type="number" id="update-rate7" step="0.01">
+                    </div>
+
+                </div>
+                
+                <div class="form-row">
+
+                    <div class="form-group" >
+                        <label for="benefits">Has Benefits:
+                        <input type="checkbox" id="update-benefits">
+                        </label>
+                    </div>
+                    <div class="form-group" >
+                        <label for="is-active">Active:
+                        <input type="checkbox" id="update-is-active">
+                        </label>
+                    </div>
+
+                </div>
+                <div id="update-error" class="error-message"></div>
+                
+                <button type="submit" class="btn btn-primary">Update Employee</button>
+            </form>
+        </div>    
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script type="module" src="utils.js"></script>
+    <script type="module" src="app.js"></script>
+    <script type="module" src="addEmployee.js"></script>
+</body>
+</html>

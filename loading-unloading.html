@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   
+</head>
+<body>
+
+     <div id="custom-title-bar">
+        <div class="title-bar-left">
+            <button id="app-icon-btn" class="title-bar-button">
+                <i class="fas fa-bars app-icon"></i>
+            </button>
+            <span class="app-title">Attendance System</span>
+        </div>
+        <div class="title-bar-right">
+            <button id="minimize-btn" class="title-bar-button"><i class="fas fa-minus"></i></button>
+            <button id="maximize-btn" class="title-bar-button"><i class="fas fa-square"></i></button>
+            <button id="close-btn" class="title-bar-button close-button"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <div id="sidebar-menu">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button id="sidebar-close-btn" class="sidebar-close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#" data-tab-target="attendance" data-page-target="attendance.html"><i class="fa-solid fa-user"></i> Take Attendance</a></li>
+           <li><a href="#" data-page-target="index.html" data-tab-name="weekly-payemnts"><i class="fas fa-users"></i> Employees Weekly Payments</a></li>
+            <li><a href="#" data-page-target="loading-unloading.html"><i class="fas fa-truck-loading"></i> Loading/Unloading Payments</a></li>
+            <li><a href="#" data-page-target="packing.html"><i class="fas fa-box-open"></i> Packing Payments</a></li>
+            <li><a href="#" data-page-target="draw-machine.html"><i class="fas fa-cube"></i> Bull Block Payments</a></li>
+            <li><a href="#" data-page-target="add-employee.html"><i class="fas fa-user-plus"></i> Add Employee</a></li>
+            <li><a href="#" data-page-target="bhati.html"><i class="fa-solid fa-fire"></i> Bhati Paymemnts</a></li>
+            <li><a href="#" data-page-target="overtime.html"><i class="fa-solid fa-clock"></i> Overtime Paymemnts</a></li>
+            <li><a href="#" data-tab-target="miscellaenous" data-page-target="miscellaenous.html"><i class="fa-solid fa-toolbox"></i> Miscellaenous</a></li>
+            <li><a href="#" data-page-target="driver.html" data-tab-name="driver"><i class="fa-solid fa-truck"></i> Driver Payments</a></li>
+            <li><a href="#" data-page-target="view-details.html" data-tab-name="view-records"><i class="fas fa-file-invoice"></i> View Records</a></li>
+        </ul>
+    </div>
+
+    <div id="sidebar-overlay"></div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="loading-unloading">loading-unloading Payments</button>
+            <button class="tab-btn" data-tab="view-records">View Records</button>
+            <button class="tab-btn" data-tab="rate-change">Change Rate</button>
+
+            <button id="theme-toggle" class="theme-toggle-btn" style="margin-left: auto;">Toggle Theme</button>
+        </div>
+
+        <div id="loading-unloading" class="tab-content active">
+             <h2>Record Daily loading-unloading Payments</h2>
+            <form id="loading-unloading-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="work-date">Work date:</label>
+                        <input type="date" id="work-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lorry-no">Lorry No:</label>
+                        <input type="text" id="lorry-no" step="1"  required >
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="employee-multi-select">Employee:</label>
+                        <div class="multi-select-container">
+                            <div class="multi-select-selected-tags" id="employee-selected-tags"> </div>
+                            <div class="multi-select-dropdown" id="employee-dropdown"> </div>
+                            <input type="hidden" id="selected-employee-ids" name="selectedEmployeeIds" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+
+                    <div class = "form-group">
+                        <label for = "type">Type:</label>
+                        <select id="type" required>
+                            <option value="">Select Type</option>
+                            <option value="received">Received</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Weight:</label>
+                        <input type="number" id="weight" step=".5" min="1" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="paid-by">Paid By:</label>
+                        <select id="paid-by">
+                            <option value="">Select Paid By</option>
+                            <option value="1">Employee</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="rate">Rate per Ton:</label>
+                        <input type="number" id="rate" step="1" value="30" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="amount-to-pay">Amount Payable:</label>
+                        <input type="number" id="amount-to-pay" step="1" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-date">Payment date:</label>
+                        <input type="date" id="payment-date">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="remarks">Remarks:</label>
+                        <input type="text" id="remarks" >
+                    </div>
+                </div>
+                <div id="loading-unloading-error" class="error-message"></div>
+                <button type="submit" class="btn btn-primary" id="submit-btn">Submit</button>
+                <button type="button" id="cancel-edit-btn" class="btn btn-primary" style="display: none;">Cancel</button>
+            </form>
+        </div>
+        <div id="view-records" class="tab-content">
+            <h2>View Bull Block Records</h2>
+            <div class="filter-controls">
+                              
+                <div class="form-group">
+                    <label for="filter-start-date">Start Date:</label>
+                     <input type="date" id="filter-start-date" > 
+                </div>
+                
+                <div class="form-group">
+                    <label for="filter-end-date">End  Date:</label>
+                   <input type="date" id="filter-end-date" >
+                </div>
+            </div>
+            <div id = "record-details" style="margin: .5rem;">
+                Number of Records: <span id="record-count">0</span>
+                Total Amount paid: <span id="total-amount">0.00</span>
+            </div>
+            <button id="export-excel-btn" class="export-btn">Excel</button>
+            <button id="export-pdf-btn" class="export-btn" style="margin-left: 10px;">PDF</button>
+
+            <table id="records-table">
+                <thead>
+                    <tr>
+                        <th>Sr.No.</th>
+                        <th>Date</th>
+                        <th>Employee</th>
+                        <th>Lorry-No</th>
+                        <th>Type</th>
+                        <th>Weight(kg)</th>
+                        <th>Rate</th>
+                        <th>Amount Payable</th>
+                        <th>Paid By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="records-table-body">
+                    </tbody>
+            </table>
+             <!-- <button id="export-excel-btn" class="export-btn">Excel</button>
+            <button id="export-pdf-btn" class="export-btn" style="margin-left: 10px;">PDF</button> -->
+            
+     </div>
+     <div id="rate-change" class="tab-content">
+        <h2>Change Rate</h2>
+            <form id="rate-change-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ratePerTon">Rate per Ton:</label>
+                        <input type="number" id="rate-per-ton" step="1" min="0">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submit-btn">Submit</button>
+            </form>
+    </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script type="module" src="utils.js"></script>
+    <script type="module" src="app.js"></script>
+    <script type="module" src="loadingUnloading.js"></script>
+</body>
+</html>

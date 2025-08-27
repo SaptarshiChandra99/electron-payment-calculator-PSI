@@ -1,0 +1,25 @@
+{
+  "name": "employee-attendance-electron-app",
+  "version": "1.0.0",
+  "description": "An Electron application for managing employee attendance and payments.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "rebuild-sqlite": "electron-rebuild -f -w sqlite3"
+  },
+  "keywords": [
+    "Electron",
+    "SQLite",
+    "Attendance",
+    "Payment"
+  ],
+  "author": "Your Name/Company Name",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^29.4.6",
+    "electron-rebuild": "^3.2.9"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  }
+}

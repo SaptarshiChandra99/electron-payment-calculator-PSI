@@ -1,0 +1,1162 @@
+/* General Body and Container Styles */
+body {
+    font-family: 'Inter', sans-serif; /* Modern, clean font */
+    line-height: 1.6;
+    margin: 0;
+    padding: 0; /* Remove body padding as custom title bar will be full width */
+    background-color: #eef2f6; /* Light, subtle background */
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+    overflow-y: auto; /* Ensure scrollbar is visible if content overflows */
+    
+}
+
+/* Custom Title Bar Styles */
+#custom-title-bar {
+    -webkit-app-region: drag; /* Allows dragging the window by this area */
+    height: 40px; /* Standard height for title bars */
+    background-color: #34495e; /* Dark background matching app's deeper tones */
+    
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 0.9rem;
+    position: sticky; /* Keeps it at the top */
+    top: 0;
+    z-index: 1001; /* Ensure it's above other content */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+    
+}
+
+.title-bar-left {
+    display: flex;
+    align-items: center;
+    -webkit-app-region: no-drag; /* Elements inside title bar should not drag */
+}
+
+.app-icon {
+    font-size: 1.1rem;
+    margin-right: 8px;
+    color: #87cefa; /* A light blue for the icon */
+}
+
+.app-title {
+    font-weight: 500;
+}
+
+.title-bar-right {
+    display: flex;
+    -webkit-app-region: no-drag; /* Buttons should not drag the window */
+}
+
+.title-bar-button {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 40px; /* Square buttons */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.title-bar-button:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* Light hover effect */
+}
+
+.title-bar-button.close-button:hover {
+    background-color: #e81123; /* Red hover for close button */
+}
+
+/* Sidebar Styles */
+#sidebar-menu {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Hidden by default */
+    width: 250px;
+    height: 100vh;
+    background-color: #2c3e50; /* Dark background for sidebar */
+    color: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000; /* Below title bar but above container */
+    transition: left 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    padding-top: 40px; /* Space for title bar */
+    overflow: hidden;
+}
+
+#sidebar-menu.active {
+    left: 0; /* Show sidebar */
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #34495e; /* Slightly lighter header for sidebar */
+    border-bottom: 1px solid #4a6581;
+    -webkit-app-region: drag; /* Make sidebar header draggable */
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #87cefa;
+}
+
+.sidebar-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    -webkit-app-region: no-drag; /* Don't drag when clicking close */
+    transition: color 0.2s ease;
+}
+
+.sidebar-close-btn:hover {
+    color: #e81123;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; /* Allows nav to take up available space */
+    overflow-y: auto;
+    max-height: calc(100vh - 90px);
+}
+
+.sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #ecf0f1;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    gap: 10px; /* Space between icon and text */
+}
+
+.sidebar-nav li a:hover,
+.sidebar-nav li a.active-sidebar-link {
+    background-color: #3d566e;
+    color: #87cefa;
+}
+
+.sidebar-nav li a i {
+    font-size: 1.1rem;
+    width: 25px; /* Fixed width for icons for alignment */
+    text-align: center;
+}
+
+
+/* Overlay for background when sidebar is open */
+#sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 999; /* Below sidebar, above container */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* Main Container (adjusting for custom title bar) */
+.container {
+    position: relative;
+    max-width: 1100px;
+    margin: 20px auto; /* Add top/bottom margin to accommodate title bar */
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Heading Styles */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+h2 {
+    color: #34495e;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Tab Navigation */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #dde1e6;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.tab-btn {
+    padding: 14px 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #555;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    border-bottom: 3px solid transparent;
+    position: relative;
+    top: 2px;
+}
+
+.tab-btn:hover {
+    color: #007bff;
+}
+
+.tab-btn.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+    font-weight: 600;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    padding: 10px 18px;
+    background-color: #f0f4f8;
+    color: #4a5568;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-toggle-btn:hover {
+    background-color: #e2e8f0;
+    border-color: #a0aec0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Tab Content Areas */
+.tab-content {
+    background: #fdfdfd;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="tel"],
+select {
+    padding: 12px 15px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    background-color: #f8fafc;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus,
+select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Filter Specific Styles */
+
+.filter-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-controls .form-group {
+    margin-bottom: 0;
+}
+
+.filter-controls select {
+    min-width: 120px;
+}
+
+/* Basic styling for the multi-select dropdown and chips */
+/* Multi-select dropdown styles */
+.multi-select-container {
+    position: relative;
+    /* padding: 12px 15px; */
+    /* height: 42px; */
+    width: 100%;
+}
+
+.multi-select-selected-tags {
+    border: 1px solid #cbd5e0;
+    padding: 12px 15px;
+    height: 42px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    cursor: pointer;
+    align-items: center;
+    transition: border-color 0.3s ease;
+}
+
+.multi-select-selected-tags:focus-within {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+.multi-select-selected-tags.empty {
+    color: #a0aec0;
+}
+
+.multi-select-tag {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85em;
+}
+
+.multi-select-tag .remove-tag {
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 5px;
+    font-size: 0.9em;
+}
+
+.multi-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #cbd5e0;
+    border-top: none;
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: white;
+    z-index: 1000;
+    display: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.multi-select-dropdown.show {
+    display: block;
+}
+
+.multi-select-dropdown-search {
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.multi-select-dropdown-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.95em;
+}
+
+.multi-select-dropdown-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.multi-select-dropdown-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.multi-select-dropdown-item:hover {
+    background-color: #f8fafc;
+}
+
+.multi-select-dropdown-item.selected {
+    background-color: #ebf4ff;
+    color: #007bff;
+}
+
+.multi-select-dropdown-item.selected:hover {
+    background-color: #e1effe;
+}
+
+/* Dark mode styles */
+body.dark-mode .multi-select-selected-tags {
+    background-color: #4a6581;
+    border-color: #5e7d9b;
+}
+
+body.dark-mode .multi-select-selected-tags.empty {
+    color: #a0aec0;
+}
+
+body.dark-mode .multi-select-tag {
+    background-color: #87cefa;
+    color: #2c3e50;
+}
+
+body.dark-mode .multi-select-dropdown {
+    background-color: #3d566e;
+    border-color: #5e7d9b;
+}
+
+body.dark-mode .multi-select-dropdown-search {
+    background-color: #3d566e;
+    border-bottom-color: #4a6581;
+}
+
+body.dark-mode .multi-select-dropdown-search input {
+    background-color: #4a6581;
+    border-color: #5e7d9b;
+    color: #ecf0f1;
+}
+
+body.dark-mode .multi-select-dropdown-item {
+    border-bottom-color: #4a6581;
+}
+
+body.dark-mode .multi-select-dropdown-item:hover {
+    background-color: #4a6581;
+}
+
+body.dark-mode .multi-select-dropdown-item.selected {
+    background-color: #4a6581;
+    color: #87cefa;
+}
+
+body.dark-mode .multi-select-dropdown-item.selected:hover {
+    background-color: #5e7d9b;
+}
+
+
+/* Buttons */
+.btn,
+.export-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.export-btn {
+    background-color: #28a745;
+    color: white;
+    margin-top: 25px;
+    align-self: flex-start;
+}
+
+.export-btn:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+.expand-record-btn{
+    background-color: rgb(144, 214, 38);
+    color: white;
+    padding: 3px 6px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+.edit-btn{
+    background-color: #218838;
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+
+}
+
+.edit-btn:hover{
+    background-color: #28a745;
+    transform: translate(-1px);
+}
+/* Payment Display Section */
+.payment-display {
+    background-color: #e6f7ff;
+    border: 1px solid #b3e0ff;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: space-around;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #0056b3;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.payment-item span {
+    font-weight: 700;
+    color: #003366;
+    margin-left: 5px;
+}
+
+/* Record Details Section */
+#record-details {
+    margin: 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #4a5568;
+    background-color: #f8fcfd;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid #e0e6ed;
+    display: flex;
+    gap: 30px;
+    justify-content: flex-start;
+}
+
+#record-details span {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* Table Styles */
+#records-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#records-table thead {
+    background-color: #007bff;
+    color: white;
+}
+
+#records-table th,
+#records-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#records-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#records-table tbody tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+#records-table tbody tr:hover {
+    background-color: #f0f8ff;
+    transition: background-color 0.2s ease;
+}
+
+.record-details td {
+    background-color: #f9fbfd;
+    padding: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.record-details {
+    font-size: 0.9rem;
+    color: #555;
+    display: flex;
+    gap: 40px;
+}
+
+.record-details p {
+    margin: 5px 0;
+}
+
+
+/* Custom Modal / Message Box */
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.custom-modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    min-width: 300px;
+    max-width: 90%;
+    animation: fadeInScale 0.3s ease-out;
+}
+
+.custom-modal-content p {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.custom-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.custom-modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#custom-modal-ok-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+#custom-modal-ok-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+#custom-modal-cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+#custom-modal-cancel-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* Scrollbar Styling (matching current theme) */
+/* For WebKit browsers (Chrome, Safari, Electron) */
+::-webkit-scrollbar {
+    width: 10px; /* Width of vertical scrollbar */
+    height: 10px; /* Height of horizontal scrollbar */
+}
+
+.sidebar-nav::-webkit-scrollbar,
+#sidebar-menu::-webkit-scrollbar {
+    width: 8px; /* Slightly thinner for sidebar */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    /* margin-top: 40px; Adjust for custom title bar height */
+    background: #f0f4f8; /* Light background for the scrollbar track */
+    border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+     margin-top: 40px; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #cbd5e0; /* Default light grey thumb */
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0; /* Darker grey on hover */
+}
+
+
+
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #2c3e50; /* Darker background */
+    color: #ecf0f1; /* Light text */
+}
+
+/* Dark Mode Custom Title Bar Styles */
+body.dark-mode #custom-title-bar {
+    background-color: #1a2c3a; /* Even darker blue for dark mode title bar */
+    color: #ecf0f1;
+}
+
+body.dark-mode .app-icon {
+    color: #87cefa;
+}
+
+body.dark-mode .title-bar-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .title-bar-button.close-button:hover {
+    background-color: #e81123; /* Still red for close in dark mode */
+}
+
+
+body.dark-mode .container {
+    background: #34495e; /* Darker container background */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode h1,
+body.dark-mode h2 {
+    color: #ecf0f1; /* Light headings */
+}
+
+body.dark-mode .tabs {
+    border-bottom-color: #4a6581;
+}
+
+body.dark-mode .tab-btn {
+    color: #bdc3c7;
+}
+
+body.dark-mode .tab-btn:hover {
+    color: #87cefa; /* Lighter blue hover */
+}
+
+body.dark-mode .tab-btn.active {
+    color: #87cefa;
+    border-bottom-color: #87cefa;
+}
+
+body.dark-mode .theme-toggle-btn {
+    background-color: #4a6581;
+    color: #ecf0f1;
+    border-color: #5e7d9b;
+}
+
+body.dark-mode .theme-toggle-btn:hover {
+    background-color: #5e7d9b;
+    border-color: #6a8ba7;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .tab-content {
+    background: #3d566e; /* Darker content background */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .form-group label {
+    color: #c7d1d9;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="date"],
+body.dark-mode input[type="tel"],
+body.dark-mode select {
+    background-color: #4a6581; /* Darker input background */
+    color: #ecf0f1;
+    border-color: #5e7d9b;
+}
+
+body.dark-mode input[type="text"]:focus,
+body.dark-mode input[type="number"]:focus,
+body.dark-mode input[type="date"]:focus,
+body.dark-mode input[type="tel"],
+body.dark-mode select:focus {
+    border-color: #87cefa; /* Light blue focus */
+    box-shadow: 0 0 0 3px rgba(135, 206, 250, 0.2);
+}
+
+body.dark-mode .btn-primary {
+    background-color: #87cefa; /* Lighter blue for primary button */
+    color: #2c3e50;
+}
+
+/* Invalid input state (faded) */
+body.dark-mode .btn-primary.invalid-input {
+    background-color: rgba(135, 206, 250, 0.5); /* 50% opacity */
+}
+
+body.dark-mode .btn-primary:hover {
+    background-color: #6cb6eb;
+}
+
+body.dark-mode .export-btn {
+    background-color: #66bb6a; /* Lighter green for export */
+}
+
+body.dark-mode .export-btn:hover {
+    background-color: #4caf50;
+}
+
+body.dark-mode .delete-btn {
+    background-color: #ef5350; /* Lighter red for delete */
+}
+
+body.dark-mode .delete-btn:hover {
+    background-color: #e53935;
+}
+
+body.dark-mode .payment-display {
+    background-color: #4a6581;
+    border-color: #5e7d9b;
+    color: #ecf0f1;
+}
+
+body.dark-mode .payment-item span {
+    color: #87cefa;
+}
+
+body.dark-mode #record-details {
+    background-color: #4a6581;
+    border-color: #5e7d9b;
+    color: #c7d1d9;
+}
+
+body.dark-mode #record-details span {
+    color: #ecf0f1;
+}
+
+body.dark-mode #records-table thead {
+    background-color: #87cefa; /* Lighter blue header */
+    color: #2c3e50;
+}
+
+body.dark-mode #records-table th,
+body.dark-mode #records-table td {
+    border-bottom-color: #4a6581;
+}
+
+body.dark-mode .record-details {
+    background-color: #3d566e;
+    color: #ecf0f1;
+}
+
+
+body.dark-mode #records-table tbody tr:nth-child(even) {
+    background-color: #3d566e;
+}
+
+body.dark-mode #records-table tbody tr:hover {
+    background-color: #5e7d9b;
+}
+
+body.dark-mode .custom-modal-content {
+    background-color: #3d566e;
+    color: #ecf0f1;
+}
+
+body.dark-mode .custom-modal-content p {
+    color: #ecf0f1;
+}
+
+body.dark-mode .custom-modal-btn {
+    color: #ecf0f1;
+}
+
+body.dark-mode #custom-modal-ok-btn {
+    background-color: #87cefa;
+    color: #2c3e50;
+}
+
+body.dark-mode #custom-modal-ok-btn:hover {
+    background-color: #6cb6eb;
+}
+
+body.dark-mode #custom-modal-cancel-btn {
+    background-color: #5a6268;
+}
+
+body.dark-mode #custom-modal-cancel-btn:hover {
+    background-color: #4a5560;
+}
+
+/* Dark mode scrollbar styles */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #34495e; /* Darker track for dark mode */
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #5e7d9b; /* Darker thumb for dark mode */
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #87cefa; /* Lighter blue on hover in dark mode */
+}
+
+/* styles for view employee payment details page */
+/* In styles.css */
+#employee-payment-details table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#employee-payment-details th,
+#employee-payment-details td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+#employee-payment-details th {
+    background-color: var(--primary-color-light); /* Or any color that fits your theme */
+    color: var(--text-color-dark);
+}
+#employee-payment-details tr:nth-child(even) {
+    background-color: var(--background-color-light); /* Light alternate row color */
+}
+
+#employee-payment-details tr:last-child {
+    font-weight: bold; /* Make the total row stand out */
+    background-color: var(--accent-color); /* A different background for total */
+    color: var(--text-color-light);
+}
+
+/* end of styles for view employee payment details page */
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
+    .container {
+        padding: 20px;
+        gap: 15px;
+        margin: 15px auto; /* Adjust margin for smaller screens */
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    .tab-btn {
+        padding: 10px 15px;
+        font-size: 0.95rem;
+    }
+
+    .form-row {
+        flex-direction: column; /* Stack form groups vertically */
+        gap: 15px;
+    }
+
+    .form-group {
+        min-width: unset; /* Remove min-width constraint */
+        width: 100%;
+    }
+
+    .btn, .export-btn {
+        padding: 10px 10px;
+        font-size: 1rem;
+
+    }
+
+    .payment-display, #record-details {
+        flex-direction: column;
+        gap: 15px;
+        font-size: 1rem;
+    }
+
+    #records-table th,
+    #records-table td {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Hide less critical columns on small screens if table becomes too wide */
+    #records-table th:nth-child(4), /* Days */
+    #records-table td:nth-child(4),
+    #records-table th:nth-child(5), /* Duties */
+    #records-table td:nth-child(5) {
+        /* display: none; */ /* Uncomment to hide these on small screens */
+    }
+
+    /* Adjust custom title bar for smaller screens if necessary */
+    #custom-title-bar {
+        height: 35px; /* Slightly shorter on small screens */
+        padding: 0 5px;
+    }
+
+    .title-bar-button {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* error message */
+.error-message {
+    color: #f3061a; /* Red color for error messages */
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 5px;
+    transition: opacity 0.3s ease;
+}
+
+@media (max-width: 480px) {
+    .tabs {
+        flex-wrap: wrap; /* Allow tab buttons to wrap */
+    }
+    .tab-btn {
+        width: 100%; /* Make tabs full width */
+        margin-right: 0;
+        border-radius: 8px;
+        margin-bottom: 5px;
+    }
+    .theme-toggle-btn {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+

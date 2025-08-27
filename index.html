@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System</title>
+    <link rel="stylesheet" href="styles.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Inter font for modern UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+     <!-- Custom Title Bar -->
+    <div id="custom-title-bar">
+        <div class="title-bar-left">
+            <button id="app-icon-btn" class="title-bar-button">
+                <i class="fas fa-bars app-icon"></i>
+            </button>
+            <span class="app-title">Attendance System</span>
+        </div>
+        <div class="title-bar-right">
+            <button id="minimize-btn" class="title-bar-button"><i class="fas fa-minus"></i></button>
+            <button id="maximize-btn" class="title-bar-button"><i class="fas fa-square"></i></button>
+            <button id="close-btn" class="title-bar-button close-button"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <div id="sidebar-menu">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button id="sidebar-close-btn" class="sidebar-close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#" data-tab-target="attendance" data-page-target="attendance.html"><i class="fa-solid fa-user"></i> Take Attendance</a></li>
+            <li><a href="#" data-tab-target="weekly-payemnts" data-page-target="index.html"><i class="fas fa-users"></i> Employees Weekly Payments</a></li>
+            <li><a href="#" data-tab-target="loading-unloading" data-page-target="loading-unloading.html"><i class="fas fa-truck-loading"></i> Loading/Unloading Payments</a></li>
+            <li><a href="#" data-tab-target="packing-payments" data-page-target="packing.html"><i class="fas fa-box-open"></i> Packing Payments</a></li>
+            <li><a href="#" data-tab-target="draw-machine" data-page-target="draw-machine.html"><i class="fas fa-cube"></i> Bull Block Payments</a></li>
+            <li><a href="#" data-tab-target="add-employee" data-page-target="add-employee.html"><i class="fas fa-user-plus"></i> Add Employee</a></li>
+            <li><a href="#" data-tab-target="bhati" data-page-target="bhati.html"><i class="fa-solid fa-fire"></i> Bhati Paymemnts</a></li>
+            <li><a href="#" data-page-target="overtime.html"><i class="fa-solid fa-clock"></i> Overtime Paymemnts</a></li>
+            <li><a href="#" data-page-target="miscellaenous.html" data-tab-target="miscellaenous" ><i class="fa-solid fa-toolbox"></i> Miscellaenous</a></li>
+            <li><a href="#" data-page-target="driver.html" data-tab-name="driver"><i class="fa-solid fa-truck"></i>Driver Payments</a></li>
+            <li><a href="#" data-tab-target="view-records" data-page-target="view-details.html"><i class="fas fa-file-invoice"></i> View Records</a></li>
+
+        </ul>
+    </div>
+
+    <!-- Overlay for when sidebar is open -->
+    <div id="sidebar-overlay"></div>
+
+    <div class="container">
+        <!-- <h1>Employee Payment Calculator</h1> -->
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="attendance">Take Attendance</button>
+            <!-- <button class="tab-btn" data-tab="add-employee">Add Employee</button> -->
+            <button class="tab-btn" data-tab="view-records">View Records</button>
+
+             <button id="theme-toggle" class="theme-toggle-btn" style="margin-left: auto;">Toggle Theme</button>
+        </div>
+        
+        <div id="attendance" class="tab-content active">
+            <h2>Weekly Payment Calculation</h2>
+            <form id="attendance-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="week-start">Week Start:</label>
+                        <input type="date" id="week-start" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="week-end">Week End:</label>
+                        <input type="date" id="week-end" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="employee">Employee:</label>
+                        <select id="employee" required>
+                            <option value="">Select Employee</option>
+                        </select>
+                    </div>
+               
+                    <div class="form-group">
+                        <label for="days">Number of Days Worked:</label>
+                        <input type="number" id="days" step=".5" min="0" max="7" required >
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    
+                    <div class="form-group">
+                        <label for="rate">Rate:</label>
+                        <input type="number" id="rate" step="1" min="0" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="overtime">Overtime (hours):</label>
+                        <input type="number" id="days" step=".001" min="0" value="0" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="basic">Basic Pay:</label>
+                        <input type="number" id="basic" step=".5" min="0" required >
+                    </div>
+                </div>
+
+
+               
+                <div id="attendance-error" class="error-message"></div>
+                <div >
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" id="cancel-edit-btn" class="btn btn-primary" style="display: none;">Cancel</button>
+                </div>
+               
+                
+            </form>
+        </div>
+        
+        
+        
+        <div id="view-records" class="tab-content">
+            <h2>Attendance Records</h2>
+            <!-- </div class="form-group"> -->
+                <!-- <label for="filter-week">Filter by Employee:</label>
+                <select id="filter-week">
+                    <option value="">All week</option>
+                    
+                </select> -->
+            <!-- </div> -->
+
+            <div class="filter-controls">
+                <div class="form-group">
+                    <label for="filter-year">Year:</label>
+                    <select id="filter-year">
+                        <option value="">All years</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filter-month">Month:</label>
+                    <select id="filter-month" disabled>
+                        <option value="">All months</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filter-week">Week:</label>
+                    <select id="filter-week" disabled>
+                        <option value="">All weeks</option>
+                    </select>
+                </div>
+            </div>
+            <label for="search-box" >Search: </label>
+                <input type="text" id="employee-search" placeholder="Search employees..." 
+                        style="width: 60%; padding: 10px; margin-bottom: 10px; margin-top: 0; font-size: 14px;" >
+
+            <div id = "record-details" style="margin: .5rem;">
+                Number of Records: <span id="record-count">0</span>
+                Total Amount: <span id = 'total' style="display: none;"></span>
+                Total Benefits: <span id = 'total-benefits' style="display: none;"></span>
+                Total Amount to be paid: <span id="total-amount">0.00</span>
+
+                
+            </div>
+            <button id="export-excel-btn" class="export-btn"> Excel</button>
+            <button id="export-pdf-btn" class="export-btn" style="margin-left: 10px;">PDF</button>
+            <table id="records-table">
+                <thead>
+                    <tr>
+                        <th>SrNo</th>
+                        <th>Employee Name</th>
+                        <th>Week Range</th>
+                        <th>Days</th>
+                        <th>Duties</th>
+                        <th>Rate</th>
+                        <th>Payment</th>
+                        <th>Benefits</th>
+                        <th>Payable Amount</th>
+                        <th>Actions</th>  
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <!-- <button id="export-excel" class="export-btn">Excel</button>
+            <button id="export-pdf-btn" class="export-btn" style="margin-left: 10px;">PDF</button> -->
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script type="module" src="utils.js"></script>
+    <script type="module" src="app.js"></script>
+    <script type="module" src = "weeklyPayments.js"></script>
+</body>
+</html>
