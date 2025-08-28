@@ -75,6 +75,7 @@ db.serialize(() => {
             weight REAL NOT NULL,
             rate INTEGER NOT NULL,
             amount_to_pay REAL NOT NULL,
+            shift TEXT NOT NULL,
             remarks TEXT,
             paid_by INTEGER,
             payment_date date,

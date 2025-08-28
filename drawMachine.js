@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 // --- Refresh data based on the active tab ---
                 if (tabId === 'view-records') {
                     console.log('Switching to View Records tab in bull block');
-                    loadBullBlockRecords(); // Load records for the View Records tab
+                    loadRecords(); // Load records for the View Records tab
                    
                 } 
-                else if (tabId === 'bull-block') {
+                else if (tabId === 'draw-machine') {
                     console.log('Switching to Add Record tab in bull block');
-                    loadBullBlockEmployees(); // Load employees for the Add Record tab
+                    loadEmployees(); // Load employees for the Add Record tab
                 }
                 else if (tabId === 'rate-change') {
                     console.log('Switching to Rate Change tab in bull block');
@@ -46,9 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const workDate  = new Date().toISOString().split('T')[0];
     document.getElementById('work-date').value = workDate;
 
-   async function loadBullBlockEmployees() {
+   async function loadEmployees() {
     try {
-        await loadItems('employee', 'bull block');
+        await loadItems('employee', 'draw machine');
         console.log('Employees loaded successfully for Bull Block tab');
     } catch (error) {
         console.error('Error loading employees:', error);
@@ -70,16 +70,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let amountToPay = 0;
         let rate = 0;
-        if (gauge >= 4 && gauge <= 14.5 && weight > 0) {
+        if (gauge >= 18 && gauge <= 23 && weight > 0) {
             rate = getRate(gauge) / 1000; // Convert rate to per kg
-            amountToPay = rate * weight;
+            amountToPay = Math.round(rate * weight);
             rateInput.value = (rate * 1000).toFixed(0); // Set the rate based on gauge, rounded to integer
             amountToPayInput.value = amountToPay.toFixed(2); // Display amount to 2 decimal places
             submitbutton.disabled = false; // Enable submit button if inputs are valid
-            document.getElementById('bull-block-error').innerText = ''; // Clear any previous
+            document.getElementById('draw-machine-error').innerText = ''; // Clear any previous
             submitButton.classList.remove("invalid-input"); // Restore original color
         } else {
-           document.getElementById('bull-block-error').innerText = 'Gauge must be between 4 and 14.5 and Weight must be greater than 0';
+           document.getElementById('draw-machine-error').innerText = 'Gauge must be between 18 and 23 and Weight must be greater than 0';
             amountToPayInput.value = '';
             submitbutton.disabled = true; // Disable submit button if inputs are invalid
             submitButton.classList.add("invalid-input"); // Fade the button
@@ -96,27 +96,34 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function getRate(gauge){
         let rates = {
-            rate_4_to_12_5: 350,
-            rate_13_to_13_5: 500,
-            rate_14_to_14_5: 600
+            rate_18_to_19_5: 700,
+            rate_20_to_21_5: 900,
+            rate_22: 1100,
+            rate_22_5: 1300,
+            rate_23: 1400
         };
 
-        const storedRates = localStorage.getItem('bullBlockRates');
+        const storedRates = localStorage.getItem('drawMachineRates');
         if (storedRates) {
             try {
                 rates = JSON.parse(storedRates);
             } catch (e) {
-                console.error("Error parsing bullBlockRates from localStorage:", e);
+                console.error("Error parsing drawMachine from localStorage:", e);
                 // Fallback to default rates if parsing fails
             }
         }
 
-        if (gauge >= 4 && gauge <= 12.5) {
-            return rates.rate_4_to_12_5;
-        } else if (gauge >= 13 && gauge <= 13.5) {
-            return rates.rate_13_to_13_5;
-        } else if (gauge >= 14 && gauge <= 14.5) {
-            return rates.rate_14_to_14_5;
+        if (gauge >= 18 && gauge <= 19.5) {
+            return rates.rate_18_to_19_5;
+        } else if (gauge >= 20 && gauge <= 21.5) {
+            return rates.rate_20_to_21_5;
+        } else if (gauge >= 22 && gauge <= 22.4) {
+            return rates.rate_22;
+        }else if (gauge >= 22.5 && gauge <= 22.9) {
+            return rates.rate_22_5;
+        }
+        else if (gauge >= 23 && gauge <= 23.5) {
+            return rates.rate_23;
         } else {
             return 0; // Default rate if gauge is out of range
         }
@@ -124,36 +131,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- DOM Elements for Rate Change Tab ---
     const rateChangeForm = document.getElementById('rate-change-form');
-    const rate4To12_5Input = document.getElementById('rate_4_to_12_5');
-    const rate13To13_5Input = document.getElementById('rate_13_to_13_5');
-    const rate14To14_5Input = document.getElementById('rate_14_to_14_5');
+    const rate18To19_5Input = document.getElementById('rate_18_to_19_5');
+    const rate20To21_5Input = document.getElementById('rate_20_to_21_5');
+    const rate22Input = document.getElementById('rate_22');
+    const rate22_5Input = document.getElementById('rate_22_5');
+    const rate23Input = document.getElementById('rate_23');
 
     /**
      * Loads rates from localStorage and populates the input fields in the rate change tab.
      */
     function loadRates() {
-        let rates = {
-            rate_4_to_12_5: 350, // Default values
-            rate_13_to_13_5: 500,
-            rate_14_to_14_5: 600
+         let rates = {
+            rate_18_to_19_5: 700,
+            rate_20_to_21_5: 900,
+            rate_22: 1100,
+            rate_22_5: 1300,
+            rate_23: 1400
         };
 
-        const storedRates = localStorage.getItem('bullBlockRates');
+        const storedRates = localStorage.getItem('drawMachineRates');
         if (storedRates) {
             try {
                 rates = JSON.parse(storedRates);
             } catch (e) {
-                console.error("Error parsing bullBlockRates from localStorage:", e);
+                console.error("Error parsing drawMachineRates from localStorage:", e);
             }
         } else {
             // If no rates exist in localStorage, save the default ones
-            localStorage.setItem('bullBlockRates', JSON.stringify(rates));
+            localStorage.setItem('drawMachineRates', JSON.stringify(rates));
         }
 
         // Populate the input fields with the loaded rates
-        if (rate4To12_5Input) rate4To12_5Input.value = rates.rate_4_to_12_5;
-        if (rate13To13_5Input) rate13To13_5Input.value = rates.rate_13_to_13_5;
-        if (rate14To14_5Input) rate14To14_5Input.value = rates.rate_14_to_14_5;
+        
+        if(rate18To19_5Input)   rate18To19_5Input.value = rate_18_to_19_5;
+        if(rate20To21_5Input) rate20To21_5Input.value = rate_20_to_21_5;
+        if(rate22Input) rate22Input.value = rate_22;
+        if(rate22_5Input) rate22_5Input.value = rate_22_5;
+        if(rate23Input) rate23Input.value = rate_23;
     }
 
     /**
@@ -161,11 +175,14 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function saveRates() {
         const ratesData = {
-            rate_4_to_12_5: parseFloat(rate4To12_5Input.value) || 0,
-            rate_13_to_13_5: parseFloat(rate13To13_5Input.value) || 0,
-            rate_14_to_14_5: parseFloat(rate14To14_5Input.value) || 0,
+        
+            rate_18_to_19_5: parseFloat(rate18To19_5Input .value) || 0,
+            rate_20_to_21_5: parseFloat(rate20To21_5Input.value) || 0,
+            rate_22: parseFloat(rate22Input.value) || 0,
+            rate_22_5: parseFloat(rate22_5Input.value) || 0,
+            rate_23: parseFloat(rate23Input.value) || 0,
         };
-        localStorage.setItem('bullBlockRates', JSON.stringify(ratesData));
+        localStorage.setItem('drawMachineRates', JSON.stringify(ratesData));
         console.log('Rates saved to localStorage:', ratesData);
     }
 
@@ -184,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     //function to insert data into bullblock table
-    const bullBlockForm = document.getElementById('bull-block-form');
+    const bullBlockForm = document.getElementById('draw-machine-form');
 
     bullBlockForm.addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent the default form submission
@@ -193,10 +210,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const workDate = document.getElementById('work-date').value;
         const gauge = parseFloat(document.getElementById('gauge').value) || 0;
         const weight = parseFloat(document.getElementById('weight').value) || 0;
+        const machine_no = document.getElementById('machine-no').value;
         const rate = parseFloat(document.getElementById('rate').value) || 0;
         const amountToPay = parseFloat(document.getElementById('amount-to-pay').value) || 0;
         const remarks = document.getElementById('remarks').value;
-        const no_of_coils = document.getElementById('no-of-coils').value;
+        const no_of_coils = parseInt(document.getElementById('no-of-coils').value);
         const paidBy = document.getElementById('paid-by').value;
         const shift = document.getElementById('shift').value;
         const payment_date = document.getElementById('payment-date').value;
@@ -206,9 +224,9 @@ document.addEventListener('DOMContentLoaded', function() {
          if (!validatePaidByAndDate(paidBy, payment_date)) return;
 
         // Prepare data to send to main process
-        const mainTable = 'bullblock_payments';
+        const mainTable = 'draw_machine_payments';
       //  const junctionTable = 'driver_employees';
-        const mainTableColumns = ['work_date','employee_id','gauge','weight','rate','amount_to_pay','no_of_coils','paid_by','shift'];
+        const mainTableColumns = ['work_date','employee_id','gauge','weight','rate','amount_to_pay','no_of_coils','paid_by','shift','machine_no'];
         const data = {
             work_date: workDate,
             employee_id: employee, // Assuming employee is a select element with value as employee ID
@@ -217,6 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
             rate: rate,
             amount_to_pay: amountToPay,
             no_of_coils:no_of_coils,
+            machine_no,
             paid_by : paidBy,
             shift : shift,
             remarks:remarks,
@@ -230,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
                // bullBlockData.bbId = currentBbId;
                // response = await window.electronAPI.updateBullBlockRecord(bullBlockData);
                 const mainIdColumn = 'bullblock_id';
+                console.log(data);
                 response = await window.electronAPI.updateRecord({mainTable,mainIdColumn,id:currentBbId,data});
             } else {
                 response = await window.electronAPI.insertRecord({mainTable,mainTableColumns,data});
@@ -238,15 +258,15 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('bullblock response:', response);
             if (response) {
                 showMessageBox(
-                isEditMode ? 'bullblock record updated successfully!' : ' Bullblock payment recorded successfully!','Success');
+                isEditMode ? 'Draw Machine record updated successfully!' : ' Draw Machine payment recorded successfully!','Success');
                 bullBlockForm.reset();
                 isEditMode = false; // Reset edit mode
                 currentBbId = null; // Clear current bullblock ID
-                document.getElementById('bull-block-form').querySelector('button[type="submit"]').textContent = 'Submit';
+                document.getElementById('draw-machine-form').querySelector('button[type="submit"]').textContent = 'Submit';
                 document.getElementById('cancel-edit-btn').style.display = 'none';
                 document.getElementById('work-date').value = new Date().toISOString().split('T')[0]; // Reset work date to today
-                loadBullBlockRecords(); // Refresh records after adding a new one
-                loadBullBlockEmployees(); // Reload employees in case of any changes
+                loadRecords(); // Refresh records after adding a new one
+                loadEmployees(); // Reload employees in case of any changes
             } 
         } catch (error) {
             console.error('Error adding bull block record:', error);
@@ -257,8 +277,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterStartDateInput = document.getElementById('filter-start-date');
     const filterEndDateInput = document.getElementById('filter-end-date');
 
-    filterStartDateInput.addEventListener('change', loadBullBlockRecords);
-    filterEndDateInput.addEventListener('change', loadBullBlockRecords);
+    filterStartDateInput.addEventListener('change', loadRecords);
+    filterEndDateInput.addEventListener('change', loadRecords);
     // Function to set default start and end dates (past week)
     function setDefaultFilterDates() {
         const today = new Date();
@@ -273,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to load bull block records
-    async function loadBullBlockRecords() {
+    async function loadRecords() {
 
         try {
             const startDate = document.getElementById('filter-start-date').value;
@@ -285,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // const records = await window.electronAPI.getBullBlockRecords(startDate, endDate);
             // console.log('Loaded Bull Block Records:', records);
 
-             const mainTable = 'bullblock_payments',mainAlias = 'bb', idColumn = 'bullblock_id' ,dateColumn = 'work_date';
+             const mainTable = 'draw_machine_payments',mainAlias = 'bb', idColumn = 'bullblock_id' ,dateColumn = 'work_date';
             // const junctionTable = 'driver_employees' , junctionAlias = 'dre' ,junctionMainId = 'dr_id';
              const groupEmployees = 1;
 
@@ -389,13 +409,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 try {
                     // This still assumes window.electronAPI.deleteBullBlockRecord for database interaction
                    // const result = await window.electronAPI.deleteBullBlockRecord(bullblock_id);
-                    const mainTable = 'bullblock_payments' , mainIdColumn = 'bullblock_id', id = bullblock_id;
+                    const mainTable = 'draw_machine_payments' , mainIdColumn = 'bullblock_id', id = bullblock_id;
                     const result = await window.electronAPI.deleteRecord({mainTable,mainIdColumn,id});
                     console.log('bullblock record delete result:', result);
                     if (result > 0) {
                         console.log('bullblock record deleted:', result);
                         showMessageBox('BullBlock record deleted successfully!');
-                        loadBullBlockRecords(); // Refresh records after deletion
+                        loadRecords(); // Refresh records after deletion
                     }
                     else {
                         console.error('BullBlock record not found or already deleted:', result);
@@ -415,28 +435,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const exportExcelBtn = document.getElementById('export-excel-btn');
     exportExcelBtn.addEventListener('click', () => {
-        exportTableToExcel('records-table', 'Bullblock Records', 'bullblock_records');
+        exportTableToExcel('records-table', 'Draw Machine Records', 'bullblock_records');
     });    
 
     // Event listener for the new Export to PDF button
             const exportPdfBtn = document.getElementById('export-pdf-btn');
             exportPdfBtn.addEventListener('click', () => {
-                exportTableToPdf('records-table', 'Bullblock_records', 'bullblock Records', 'total-amount');
+                exportTableToPdf('records-table', 'draw_machine_records', 'Draw Machine Records', 'total-amount');
             });
 
      document.getElementById('cancel-edit-btn').addEventListener('click', () => {
         bullBlockForm.reset();
         isEditMode = false;
         currentBbId = null;
-        document.getElementById('bull-block-form').querySelector('button[type="submit"]').textContent = 'Submit';
+        document.getElementById('draw-machine-form').querySelector('button[type="submit"]').textContent = 'Submit';
         document.getElementById('cancel-edit-btn').style.display = 'none';
-        loadBullBlockEmployees();
+        loadEmployees();
     });
 
     async function editBullBlockRecord(bbId) {
         try {
             // Fetch the overtime record with associated employee IDs
-            const record = await window.electronAPI.getRecordById(bbId,'bullblock_payments','bullblock_id');
+            const record = await window.electronAPI.getRecordById(bbId,'draw_machine_payments','bullblock_id');
 
             if (!record) {
                 showMessageBox('bull block record not found.', 'Error');
@@ -446,7 +466,7 @@ document.addEventListener('DOMContentLoaded', function() {
             //const { record} = result;
 
             // Switch to the Overtime Payments tab
-            const bbTabBtn = document.querySelector('.tab-btn[data-tab="bull-block"]');
+            const bbTabBtn = document.querySelector('.tab-btn[data-tab="draw-machine"]');
             bbTabBtn.click();
 
             // Set edit mode
@@ -455,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             console.log('Editing bull block record:', record);
 
-           await loadBullBlockEmployees(); // Ensure employees are loaded before setting values
+           await loadEmployees(); // Ensure employees are loaded before setting values
 
            // document.getElementById('employee').value = record.employee_id;
             document.getElementById('employee').value = record.employee_id;
@@ -469,10 +489,11 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('no-of-coils').value = record.no_of_coils;
             document.getElementById('paid-by').value = record.paid_by;
             document.getElementById('payment-date').value = record.payment_date;
+            document.getElementById('machine-no').value = record.machine_no;
             document.getElementById('cancel-edit-btn').style.display = 'inline-block';
 
             // Update the submit button text
-            document.getElementById('bull-block-form').querySelector('button[type="submit"]').textContent = 'Update';
+            document.getElementById('draw-machine-form').querySelector('button[type="submit"]').textContent = 'Update';
         } catch (error) {
             console.error('Error loading bull block record for editing:', error);
             showMessageBox('Failed to load bull block record for editing.', 'Error');
@@ -481,9 +502,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load initial records when the page is ready
     setDefaultFilterDates(); // Set default filter dates
-    loadBullBlockRecords();
-    loadItems('paid-by','Manager');
-    loadBullBlockEmployees(); // Load employees for the dropdown
+    loadRecords();
+    loadItems('paid-by','manager');
+    loadEmployees(); // Load employees for the dropdown
 
     // Initial load of rates if the 'rate-change' tab is the default active tab
     // This is already handled by the tabBtns.forEach listener and the DOMContentLoaded check above.

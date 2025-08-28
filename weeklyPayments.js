@@ -293,12 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateTotals(records) {
         document.getElementById('record-count').textContent = records.length;
-        const totalAmountPayable = records.reduce((sum, record) => sum + (record.amount_payable || 0), 0);
-        const totalAmount = records.reduce((sum, record) => sum + (record.payment || 0), 0);
-        const totalBenefits = records.reduce((sum, record) => sum + (record.benefits || 0), 0);
+        const totalAmountPayable = records.reduce((sum, record) => sum + (record.amount_to_pay || 0), 0);
         document.getElementById('total-amount').textContent = totalAmountPayable.toFixed(2);
-        document.getElementById('total').textContent = totalAmount.toFixed(2);
-        document.getElementById('total-benefits').textContent = totalBenefits.toFixed(2);
+        
     }
 
     async function deleteRecord(attendanceId) {
