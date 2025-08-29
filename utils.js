@@ -436,7 +436,7 @@ export async function exportTableToPdf(tableId, filename, headerTitle, totalAmou
         tableHeadRow.querySelectorAll('th').forEach((th, index, arr) => {
             // Skip if it's the 'Week Range' column OR the last 'Actions' column
             if (index !== weekRangeColumnIndex && index < arr.length - actionColumnOffset) {
-                head.push(th.textContent);
+                head.push(th.textContent.trim());
             }
         });
     }
@@ -451,7 +451,7 @@ export async function exportTableToPdf(tableId, filename, headerTitle, totalAmou
         tr.querySelectorAll('td').forEach((td, index, arr) => {
             // Skip if it's the 'Week Range' column OR the last 'Actions' column
             if (index !== weekRangeColumnIndex && index < arr.length - actionColumnOffset) {
-                rowData.push(td.textContent);
+                rowData.push(td.textContent.trim());
             }
         });
         body.push(rowData);

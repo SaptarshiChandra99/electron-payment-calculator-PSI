@@ -79,9 +79,10 @@ db.serialize(() => {
             remarks TEXT,
             paid_by INTEGER,
             payment_date date,
+            no_of_coils INTEGER NOT NULL,
             FOREIGN KEY (paid_by) REFERENCES EMPLOYEES(eid),
             FOREIGN KEY (employee_id) REFERENCES employees(eid)
-            UNIQUE (work_date , employee_id, shift)
+            UNIQUE (work_date , employee_id, shift,gauge)
         )`
     ); 
     
@@ -117,7 +118,7 @@ db.serialize(() => {
             bhati_id INTEGER PRIMARY KEY AUTOINCREMENT,
             week_start DATE NOT NULL,
             week_end DATE NOT NULL,
-            eid INTEGER NOT NULL,
+            employee_id INTEGER NOT NULL,
             shift TEXT NOT NULL,
             bhati_duty INTEGER NOT NULL,
             rate INTEGER NOT NULL,
@@ -125,9 +126,9 @@ db.serialize(() => {
             paid_by INTEGER,
             payment_date date,
             remarks TEXT,
-            FOREIGN KEY (eid) REFERENCES employees(eid)
+            FOREIGN KEY (employee_id) REFERENCES employees(eid)
             FOREIGN KEY (paid_by) REFERENCES employees(eid),
-            UNIQUE (week_start,week_end,eid)
+            UNIQUE (week_start,week_end,employee_id)
         )
     `);
 

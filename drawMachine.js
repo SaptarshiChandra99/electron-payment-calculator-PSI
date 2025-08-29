@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Prepare data to send to main process
         const mainTable = 'draw_machine_payments';
       //  const junctionTable = 'driver_employees';
-        const mainTableColumns = ['work_date','employee_id','gauge','weight','rate','amount_to_pay','no_of_coils','paid_by','shift','machine_no'];
+        const mainTableColumns = ['work_date','employee_id','gauge','weight','rate','amount_to_pay','no_of_coils','paid_by','shift','machine_no','remarks'];
         const data = {
             work_date: workDate,
             employee_id: employee, // Assuming employee is a select element with value as employee ID
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentBbId = null; // Clear current bullblock ID
                 document.getElementById('draw-machine-form').querySelector('button[type="submit"]').textContent = 'Submit';
                 document.getElementById('cancel-edit-btn').style.display = 'none';
-                document.getElementById('work-date').value = new Date().toISOString().split('T')[0]; // Reset work date to today
+                document.getElementById('work-date').value =workDate; // Reset work date to today
                 loadRecords(); // Refresh records after adding a new one
                 loadEmployees(); // Reload employees in case of any changes
             } 
