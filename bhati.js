@@ -333,13 +333,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Fetch the bhati record with associated employee IDs
                 const result = await window.electronAPI.getRecordById(
                     bhatiId,'bhati_payments','bhati_id');
-                console.log(result);
-                if (!result || !result.record) {
+                console.log(result , 'after edit button');
+                if (!result) {
                     showMessageBox('Bhati record not found.', 'Error');
                     return;
                 }
     
-                const { record, employeeIds } = result;
+               // const { record, employeeIds } = result;
+
+                
     
                 // Switch to the Bhati Payments tab
                 const bhatiTabBtn = document.querySelector('.tab-btn[data-tab="bhati-payments"]');
@@ -348,18 +350,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Set edit mode
                 isEditMode = true;
                 currentBhatiId = bhatiId;
+
+                await loadItems('employee' , 'labour');
     
                 // Populate the form
-                document.getElementById('work-date').value = record.work_date;
-                document.getElementById('week-start').value = record.week_start;
-                document.getElementById('week-end').value = record.week_end;
-                document.getElementById('employee').value = employeeIds;
-                document.getElementById('bhati-rate').value = record.rate;
-                document.getElementById('amount-to-pay').value = record.amount_to_pay;
-                document.getElementById('paid-by').value = record.paid_by;
-                document.getElementById('shift').value = record.shift;
-                document.getElementById('remarks').value = record.remarks;
-                document.getElementById('payment-date').value = record.payment_date;
+                document.getElementById('week-start').value = result.week_start;
+                document.getElementById('week-end').value = result.week_end;
+                document.getElementById('employee').value = result.employee_nicknames;
+                document.getElementById('bhati-rate').value = result.rate;
+                document.getElementById('bhati-duty').value = result.bhati_duty;
+                document.getElementById('amount-to-pay').value = result.amount_to_pay;
+                document.getElementById('paid-by').value = result.paid_by;
+                document.getElementById('shift').value = result.shift;
+                document.getElementById('remarks').value = result.remarks;
+                document.getElementById('payment-date').value = result.payment_date;
 
                 document.getElementById('cancel-edit-btn').style.display = 'inline-block';
     
