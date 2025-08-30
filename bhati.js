@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Switch to the Bhati Payments tab
                 const bhatiTabBtn = document.querySelector('.tab-btn[data-tab="bhati-payments"]');
                 bhatiTabBtn.click();
-    
+                console.log('record in edit mode' , result);
                 // Set edit mode
                 isEditMode = true;
                 currentBhatiId = bhatiId;
@@ -354,9 +354,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 await loadItems('employee' , 'labour');
     
                 // Populate the form
+                document.getElementById('employee').value = result.employee_id;
                 document.getElementById('week-start').value = result.week_start;
                 document.getElementById('week-end').value = result.week_end;
-                document.getElementById('employee').value = result.employee_nicknames;
                 document.getElementById('bhati-rate').value = result.rate;
                 document.getElementById('bhati-duty').value = result.bhati_duty;
                 document.getElementById('amount-to-pay').value = result.amount_to_pay;
@@ -367,10 +367,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 document.getElementById('cancel-edit-btn').style.display = 'inline-block';
     
-                // Populate the employee selection
-                //const employeeTags = document.getElementById('employee-selected-tags');
-                await loadItems('employee','labour');;
-               // setSelectedEmployees(employeeIds); // Assumes this method exists in utils.js
                 // Update the submit button text
                 document.getElementById('bhati-payments-form').querySelector('button[type="submit"]').textContent = 'Update';
             } catch (error) {
