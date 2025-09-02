@@ -136,13 +136,14 @@ db.serialize(() => {
             CREATE TABLE IF NOT EXISTS misc_payments(
                 misc_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 work_date DATE NOT NULL,
-                eid INTEGER NOT NULL,
+                employee_id INTEGER NOT NULL,
                 description TEXT NOT NULL,
                 amount REAL NOT NULL,
                 paid_by INTEGER,
                 payment_date date,
-                FOREIGN KEY(eid) REFERENCES employees(eid),
+                FOREIGN KEY(employee_id) REFERENCES employees(eid),
                 FOREIGN KEY(paid_by) REFERENCES employees(eid)
+                unique (work_date,employee_id,description)
                 
             )`
     );
@@ -371,7 +372,7 @@ function getUnpaidEmployees(week_start, callback) {
     db.all(`
         SELECT e.* FROM employees e
         LEFT JOIN weekly_payments wa ON e.eid = wa.eid AND wa.week_start = ?
-        WHERE wa.attendance_id IS NULL and e.is_active = 1 and e.position = 'labour'
+        WHERE wa.attendance_id IS NULL and e.is_active = 1 and e.position != 'draw machine'
     `, [week_start], callback);
 }
 
