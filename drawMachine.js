@@ -327,6 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${formatDate(record.work_date)}</td>
                     <td>${record.employee_nicknames}</td>
                     <td>${record.shift}</td>
+                    <td>${record.machine_no}</td>
                     <td>${record.gauge}</td>
                     <td>${record.weight}</td>
                     <td>${record.rate}</td>
@@ -433,6 +434,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     }
 
+    // Event listener for the Matrix PDF export button
+    const exportMatrixPdfBtn = document.getElementById('export-matrix-pdf-btn');
+    if (exportMatrixPdfBtn) {
+        exportMatrixPdfBtn.addEventListener('click', exportMatrixToPdf);
+    }
+
     const exportExcelBtn = document.getElementById('export-excel-btn');
     exportExcelBtn.addEventListener('click', () => {
         exportTableToExcel('records-table', 'Draw Machine Records', 'bullblock_records');
@@ -499,6 +506,245 @@ document.addEventListener('DOMContentLoaded', function() {
             showMessageBox('Failed to load bull block record for editing.', 'Error');
         }
     }        
+
+    /**
+     * Exports draw machine records to PDF in matrix format
+     * Rows: Dates, Columns: Employees + Total
+     */
+    async function exportMatrixToPdf() {
+        try {
+            const startDate = document.getElementById('filter-start-date').value;
+            const endDate = document.getElementById('filter-end-date').value;
+            
+            if (!startDate || !endDate) {
+                showMessageBox('Please select a valid date range to generate PDF.', 'Error');
+                return;
+            }
+
+            // Get records using the same method as loadRecords()
+            const mainTable = 'draw_machine_payments';
+            const mainAlias = 'bb';
+            const idColumn = 'bullblock_id';
+            const dateColumn = 'work_date';
+            const groupEmployees = 1;
+
+            const records = await window.electronAPI.getRecords(
+                {mainTable, mainAlias, idColumn, dateColumn, groupEmployees},
+                startDate, 
+                endDate
+            );
+
+            if (!records || records.length === 0) {
+                showMessageBox('No records found for the selected date range.', 'Info');
+                return;
+            }
+
+            // Process data for matrix format
+            const matrixData = processRecordsForMatrix(records);
+            
+            // Generate PDF
+            generateMatrixPdf(matrixData, startDate, endDate);
+
+        } catch (error) {
+            console.error('Error exporting matrix PDF:', error);
+            showMessageBox(`Error generating PDF: ${error.message}`, 'Error');
+        }
+    }
+
+    /**
+     * Process records into matrix format
+     * @param {Array} records - Raw records from database
+     * @returns {Object} Processed matrix data
+     */
+    function processRecordsForMatrix(records) {
+        const matrix = {};
+        const employees = new Set();
+        const dates = new Set();
+
+        // Group records by date and employee
+        records.forEach(record => {
+            const date = record.work_date;
+            const employeeNames = record.employee_nicknames;
+            
+            dates.add(date);
+            
+            // Split employee names if multiple
+            const employeeList = employeeNames.split(', ');
+            employeeList.forEach(emp => employees.add(emp.trim()));
+
+            if (!matrix[date]) {
+                matrix[date] = {};
+            }
+
+            employeeList.forEach(emp => {
+                const empName = emp.trim();
+                if (!matrix[date][empName]) {
+                    matrix[date][empName] = [];
+                }
+
+                matrix[date][empName].push({
+                    gauge: record.gauge,
+                    weight: record.weight,
+                    amount: record.amount_to_pay,
+                    shift: record.shift
+                });
+            });
+        });
+
+        // Sort dates and employees
+        const sortedDates = Array.from(dates).sort();
+        const sortedEmployees = Array.from(employees).sort();
+
+        return {
+            matrix,
+            dates: sortedDates,
+            employees: sortedEmployees
+        };
+    }
+
+/**
+ * Generate PDF with matrix layout
+ */
+    function generateMatrixPdf(matrixData, startDate, endDate) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const { matrix, dates, employees } = matrixData;
+        
+        // PDF setup
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 10;
+        const startY = 30;
+        
+        // Title
+        doc.setFontSize(16);
+        doc.text('Draw Machine Production Matrix Report', pageWidth / 2, 15, { align: 'center' });
+        
+        doc.setFontSize(12);
+        doc.text(`Period: ${formatDate(startDate)} to ${formatDate(endDate)}`, pageWidth / 2, 25, { align: 'center' });
+
+        // Calculate column widths
+        const totalWidth = pageWidth - 2 * margin;
+        const dateColWidth = 25;
+        const totalColWidth = 25;
+        const empColWidth = (totalWidth - dateColWidth - totalColWidth) / employees.length;
+        
+        // Prepare table data
+        const headers = ['Date', ...employees, 'Total'];
+        const tableData = [];
+
+        dates.forEach(date => {
+            const row = [formatDate(date)];
+            let dateTotal = 0;
+
+            employees.forEach(emp => {
+                const empRecords = matrix[date] && matrix[date][emp] ? matrix[date][emp] : [];
+                
+                if (empRecords.length === 0) {
+                    row.push('-- N/A--');
+                } else {
+                    let cellContent = '';
+                    let empTotal = 0;
+                    
+                    empRecords.forEach((record, index) => {
+                        const recordText = `${record.gauge}/ ${record.weight}=${record.amount}`;
+                        cellContent += (index > 0 ? '\n' : '') + recordText;
+                        empTotal += parseFloat(record.amount);
+                    });
+                    
+                    // Add shift info if multiple shifts exist
+                    const shifts = [...new Set(empRecords.map(r => r.shift))];
+                    if (shifts.length > 1) {
+                        cellContent += `\n(${shifts.join(', ')})`;
+                    }
+                    
+                    cellContent += '\nT: ' + empTotal.toFixed(2) ;
+                    row.push(cellContent);
+                    dateTotal += empTotal;
+                }
+            });
+
+            row.push(`${dateTotal.toFixed(2)}`);
+            tableData.push(row);
+        });
+
+        // Add overall totals row
+        const totalRow = ['TOTAL'];
+        let grandTotal = 0;
+
+        employees.forEach(emp => {
+            let empGrandTotal = 0;
+            dates.forEach(date => {
+                const empRecords = matrix[date] && matrix[date][emp] ? matrix[date][emp] : [];
+                empRecords.forEach(record => {
+                    empGrandTotal += parseFloat(record.amount);
+                });
+            });
+            totalRow.push(empGrandTotal > 0 ? (empGrandTotal.toFixed(2)) : '-');
+            grandTotal += empGrandTotal;
+        });
+        totalRow.push(grandTotal.toFixed(2));
+        tableData.push(totalRow);
+
+        // Use autoTable for better formatting
+        doc.autoTable({
+            head: [headers],
+            body: tableData,
+            startY: startY,
+            theme: 'grid',
+            styles: {
+                fontSize: 8,
+                cellPadding: 2,
+                overflow: 'linebreak',
+                lineWidth: 0.1
+            },
+            headStyles: {
+                fillColor: [255,255, 255],
+                textColor: 0,
+                fontSize: 10,
+                fontStyle: 'bold',
+                halign: 'center'
+            },
+            columnStyles: {
+                0: { cellWidth: dateColWidth, halign: 'center' },
+                [employees.length + 1]: { cellWidth: totalColWidth, halign: 'center', fontStyle: 'bold' }
+            },
+            bodyStyles: {
+                valign: 'top',
+                textColor: 0,
+                halign: 'center',
+                fontSize: 9
+            },
+            
+            didParseCell: function(data) {
+                if (data.row.index === tableData.length - 1) {
+                    data.cell.styles.fillColor = [255, 255, 255];
+                    data.cell.styles.textColor = 0;
+                    data.cell.styles.fontStyle = 'bold';
+                }
+            }
+        });
+
+        // Add footer
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setPage(pageCount);
+        doc.setFontSize(8);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, pageHeight - 5);
+        doc.text(`Total Records: ${Object.values(matrix).reduce((total, dateData) => 
+            total + Object.values(dateData).reduce((dateTotal, empRecords) => 
+                dateTotal + empRecords.length, 0), 0)}`, pageWidth - margin - 50, pageHeight - 5);
+
+        // Save the PDF
+        const fileName = `draw_machine_matrix_${startDate}_to_${endDate}.pdf`;
+        doc.save(fileName);
+        
+        showMessageBox('Matrix PDF exported successfully!', 'Success');
+    }
 
     // Load initial records when the page is ready
     setDefaultFilterDates(); // Set default filter dates

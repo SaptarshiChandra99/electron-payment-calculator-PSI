@@ -492,11 +492,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('export-excel-btn')?.addEventListener('click', () => {
-        exportTableToExcel('records-table', 'Weekly Payments Records', 'weekly_payments_records');
+        exportTableToExcel('records-table', 'Weekly Payments Records PSI', 'weekly_payments_records_PSI');
     });
 
     document.getElementById('export-pdf-btn')?.addEventListener('click', () => {
-        exportTableToPdf('records-table', 'weeklyPayments_records', 'Weekly Payments Records', 'total-amount');
+        exportTableToPdf('records-table', 'weeklyPayments_records_PSI', 'Weekly Payments Records PSI', 'total-amount');
     });
 
     // Initial setup
