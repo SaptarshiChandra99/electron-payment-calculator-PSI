@@ -50,44 +50,6 @@
       deleteRecord: (data) => ipcRenderer.invoke('db:deleteRecord',data),
       updateRecord: (values) => ipcRenderer.invoke('db:updateRecord' , values),
 
-      //IPC calls for packing records
-      // addPacking: (packingData) => ipcRenderer.invoke('db:addPacking', packingData),
-      // getPackingRecords: (startDate,endDate) => ipcRenderer.invoke('db:getPackingRecords', startDate, endDate),
-      getUnpaidPackingEmployees: (work_date) => ipcRenderer.invoke('db:getUnpaidPackingEmployees', work_date),
-      // deletePackingRecord: (packingId) => ipcRenderer.invoke('db:deletePackingRecord', packingId),
-      // updatePackingRecord: (packingData) => ipcRenderer.invoke('db:updatePackingRecord', packingData),
-
-      //IPC calls for bullBlock records
-      // addBullBlock: (bullBlockData) => ipcRenderer.invoke('db:addBullBlock' , bullBlockData),
-      // getBullBlockRecords: (startDate,endDate) => ipcRenderer.invoke('db:getBullBlockRecords',startDate,endDate),
-      // deleteBullBlockRecord: (bullblock_id) => ipcRenderer.invoke('db:deleteBullBlockRecord', bullblock_id),
-      // updateBullBlockRecord: (bullBlockData) => ipcRenderer.invoke('db:updateBullBlockRecord', bullBlockData),
-      // getEmployeesForBullBlock: (work_date) => ipcRenderer.invoke('db:getEmployeesForBullBlock' , work_date),
-
-      //IPC calls for loading/unloading records
-      // insertLoadingUnloadingRecord: (recordData) => ipcRenderer.invoke('db:insertLoadingUnloadingRecord', recordData),
-      // getLoadingUnloadingRecords: (startDate,endDate) => ipcRenderer.invoke('db:getLoadingUnloadingRecords',startDate,endDate),
-      // deleteLoadingUnloadingRecord: (recordId) => ipcRenderer.invoke('db:deleteLoadingUnloadingRecord', recordId),
-      // updateLoadingRecord: (ulId, data) => ipcRenderer.invoke('db:updateLoadingRecord', ulId, data),
-      //IPC calls for bhati payments
-      // insertBhatiRecords: (data) => ipcRenderer.invoke('db:insertBhatiRecords', data),
-      // getBhatiRecords: (startDate,endDate) => ipcRenderer.invoke('db:getBhatiRecords',startDate,endDate),
-      // deleteBhatiRecord: (bhatiId) => ipcRenderer.invoke('db:deleteBhatiRecord', bhatiId),
-      // updateBhatiRecord: (bhatiId, data) => ipcRenderer.invoke('db:updateBhatiRecord', bhatiId, data),
-
-      //IPC calls for overtime payment records
-      // insertOvertimeRecords: (data) => ipcRenderer.invoke('db:insertOvertimeRecords', data),
-      // getOvertimePayments: (startDate,endDate) => ipcRenderer.invoke('db:getOvertimePayments',startDate,endDate),
-      // deleteOvertimePayment: (overtimeId) => ipcRenderer.invoke('db:deleteOvertimePayment', overtimeId),
-      // updateOvertimeRecord: (overtimeId, data) => ipcRenderer.invoke('db:updateOvertimeRecord', overtimeId, data),
-
-      //IPC CALLS for miscellaneous payment records
-      // insertMiscRecord: (data) =>ipcRenderer.invoke('db:insertMiscRecord',data),
-      // getMiscRecords: (startDate,endDate) => ipcRenderer.invoke('db:getMiscRecords',startDate,endDate),
-      // deleteMiscRecord: (misc_id) => ipcRenderer.invoke('db:deleteMiscRecord', misc_id),
-      // updateMiscRecord: (miscData) => ipcRenderer.invoke('db:updateMiscRecord', miscData),
-
-
       //IPC calls for common functions
       getRecordById: (id,tableName,idColName) => ipcRenderer.invoke('db:getRecordById',id,tableName,idColName),
       getRecordWithEmployeesById: (recordId, mainTable, mainIdColumn, employeeTable, employeeIdColumn) => ipcRenderer.invoke('db:getRecordWithEmployeesById', recordId, mainTable, mainIdColumn, employeeTable, employeeIdColumn),

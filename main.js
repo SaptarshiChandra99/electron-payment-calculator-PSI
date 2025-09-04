@@ -349,19 +349,6 @@ ipcMain.handle('db:updateEmployee', async (event, employeeData) => {
     }
 });
 
-// Add packing record handler !!!!
-// ipcMain.handle('db:addPacking', async (event, packingData) => {
-//     const { work_date,employee_id, no_of_rolls,rate, amount_to_pay,shift, remarks,paid_by } = packingData;
-//     return new Promise((resolve, reject) => {
-//         db.addPacking(work_date,employee_id, no_of_rolls,rate, amount_to_pay,shift, remarks,paid_by, (err, id) => {
-//             if (err) reject(err);
-//             else resolve(id);
-//         });
-//     });
-// });
-
-
-
 //IPC handlers for insert function generic
 ipcMain.handle('db:insertRecord', async (event, data) => {   
    
@@ -439,14 +426,12 @@ ipcMain.handle('db:getRecordWithEmployeesById', async (event, recordId, mainTabl
 // IPC handler for getting employee payment details
 ipcMain.handle('db:getEmployeePaymentDetails', async (event, eid, startDate, endDate) => {
     console.log(`Fetching payment details for employee ID in main.js: ${eid} from ${startDate} to ${endDate}`);
-    return new Promise((resolve, reject) => {
-        db.getEmployeePaymentDetails(eid, startDate, endDate, (err, rows) => {
-            if (err) {
-                console.error('Error fetching employee payment details:', err);
-                reject(err);
-            } else {
-                resolve(rows);
-            }
-        });
-    });
+    try {
+        // Await the promise from the database function
+        const rows = await db.getEmployeePaymentDetails(eid, startDate, endDate);
+        return rows; // Return the result to the renderer process
+    } catch (err) {
+        console.error('Error fetching employee payment details:', err);
+        throw err; // Throw the error so it can be caught on the renderer side
+    }
 });

@@ -86,32 +86,32 @@ db.serialize(() => {
         )`
     ); 
     
-    // db.run(`
-    //     CREATE TABLE IF NOT EXISTS loading_unloading_payments (
-    //         ul_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //         work_date DATE NOT NULL,
-    //         lorry_number TEXT NOT NULL,
-    //         type TEXT NOT NULL,
-    //         weight REAL NOT NULL,
-    //         paid_by INTEGER,
-    //         rate INTEGER NOT NULL,
-    //         amount_to_pay REAL NOT NULL,
-    //         remarks TEXT,
-    //         payment_date date,
-    //         FOREIGN KEY (paid_by) REFERENCES employees(eid)
-    //     )`
-    // ); 
+    db.run(`
+        CREATE TABLE IF NOT EXISTS loading_unloading_payments (
+            ul_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            work_date DATE NOT NULL,
+            lorry_number TEXT NOT NULL,
+            type TEXT NOT NULL,
+            weight REAL NOT NULL,
+            paid_by INTEGER,
+            rate INTEGER NOT NULL,
+            amount_to_pay REAL NOT NULL,
+            remarks TEXT,
+            payment_date date,
+            FOREIGN KEY (paid_by) REFERENCES employees(eid)
+        )`
+    ); 
     
-    // db.run(`
-    //     CREATE TABLE IF NOT EXISTS loading_unloading_employees(
-    //         id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //         ul_id INTEGER NOT NULL,
-    //         eid INTEGER NOT NULL,
-    //         FOREIGN KEY (ul_id) REFERENCES loading_unloading_payments(loading_id),
-    //         FOREIGN KEY (eid) REFERENCES employees(eid),
-    //         UNIQUE(ul_id, eid)
-    //         )`
-    //     );
+    db.run(`
+        CREATE TABLE IF NOT EXISTS loading_unloading_employees(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ul_id INTEGER NOT NULL,
+            eid INTEGER NOT NULL,
+            FOREIGN KEY (ul_id) REFERENCES loading_unloading_payments(loading_id),
+            FOREIGN KEY (eid) REFERENCES employees(eid),
+            UNIQUE(ul_id, eid)
+            )`
+        );
 
     db.run(`
         CREATE TABLE IF NOT EXISTS bhati_payments (
@@ -974,174 +974,155 @@ function getRecordWithEmployeesById(recordId, mainTable, mainIdColumn, employeeT
 
 
 //function for view records details page
-function getEmployeePaymentDetails(eid, startDate, endDate, callback) {
-    console.log('Fetching payment details for employee:', eid, 'from', startDate, 'to', endDate);
-    const query = `
-        SELECT
-            source_of_payment,
-            amount
-        FROM (
-            -- Part 1: Get breakdown by source_table
-            SELECT
-                source_table AS source_of_payment,
-                SUM(amount_paid) AS amount
-            FROM (
-                -- Payments from weekly_attendance
-                SELECT
-                    eid AS employee_id,
-                    amount_payable AS amount_paid,
-                    'Weekly Attendance' AS source_table
-                FROM
-                    weekly_attendance
-                WHERE
-                    (week_start BETWEEN ? AND ?) OR (week_end BETWEEN ? AND ?)
-                
-                UNION ALL
+/**
+ * Fetches all payment records for a given employee within a date range.
+ * @param {number} employeeId - The ID of the employee.
+ * @param {string} startDate - The start date (YYYY-MM-DD).
+ * @param {string} endDate - The end date (YYYY-MM-DD).
+ * @returns {Promise<Object>} An object containing an array of records for each payment type.
+ */
+/**
+ * Fetches all payment records for a given employee within a date range.
+ * @param {number} employeeId - The ID of the employee.
+ * @param {string} startDate - The start date (YYYY-MM-DD).
+ * @param {string} endDate - The end date (YYYY-MM-DD).
+ * @returns {Promise<Object>} An object containing an array of records for each payment type.
+ */
+function getEmployeePaymentDetails(employeeId, startDate, endDate) {
+    return new Promise((resolve, reject) => {
+        const weeklyPromise = new Promise((res, rej) => {
+            db.all('SELECT * FROM weekly_payments WHERE eid = ? AND week_start BETWEEN ? AND ?', [employeeId, startDate, endDate], (err, rows) => {
+                if (err) rej(err);
+                else res(rows);
+            });
+        });
 
-                -- Payments from packing_payments
-                SELECT
-                    employee_id,
-                    amount_to_pay AS amount_paid,
-                    'Packing Payments' AS source_table
-                FROM
-                    packing_payments
-                WHERE
-                    work_date BETWEEN ? AND ?
+        const bhatiPromise = new Promise((res, rej) => {
+            db.all('SELECT * FROM bhati_payments WHERE employee_id = ? AND week_start BETWEEN ? AND ?', [employeeId, startDate, endDate], (err, rows) => {
+                if (err) rej(err);
+                else res(rows);
+            });
+        });
 
-                UNION ALL
+        const drawMachinePromise = new Promise((res, rej) => {
+            db.all('SELECT * FROM draw_machine_payments WHERE employee_id = ? AND work_date BETWEEN ? AND ?', [employeeId, startDate, endDate], (err, rows) => {
+                if (err) rej(err);
+                else res(rows);
+            });
+        });
 
-                -- Payments from bullblock_payments
-                SELECT
-                    employee_id,
-                    amount_to_pay AS amount_paid,
-                    'Bullblock Payments' AS source_table
-                FROM
-                    bullblock_payments
-                WHERE
-                    work_date BETWEEN ? AND ?
+        const luPromise = new Promise((res, rej) => {
+            const luQuery = `
+                SELECT l.*
+                FROM loading_unloading_payments l
+                JOIN loading_unloading_employees le ON l.ul_id = le.ul_id
+                WHERE le.eid = ? AND l.work_date BETWEEN ? AND ?
+            `;
+            db.all(luQuery, [employeeId, startDate, endDate], (err, rows) => {
+                if (err) rej(err);
+                else res(rows);
+            });
+        });
 
-                UNION ALL
+        const miscPromise = new Promise((res, rej) => {
+            db.all('SELECT * FROM misc_payments WHERE employee_id = ? AND work_date BETWEEN ? AND ?', [employeeId, startDate, endDate], (err, rows) => {
+                if (err) rej(err);
+                else res(rows);
+            });
+        });
 
-                -- Payments from loading_unloading_payments (parsing JSON for employee_ids)
-                SELECT
-                    CAST(json_each.value AS INTEGER) AS employee_id,
-                    amount_to_pay AS amount_paid,
-                    'Loading/Unloading Payments' AS source_table
-                FROM
-                    loading_unloading_payments
-                JOIN json_each(loading_unloading_payments.employee_ids)
-                WHERE
-                    loading_unloading_payments.work_date BETWEEN ? AND ?
-
-                UNION ALL
-
-                -- Payments from bhati_payments (parsing JSON for employee_ids)
-                SELECT
-                    CAST(json_each.value AS INTEGER) AS employee_id,
-                    amount_to_pay AS amount_paid,
-                    'Bhati Payments' AS source_table
-                FROM
-                    bhati_payments
-                JOIN json_each(bhati_payments.employee_ids)
-                WHERE
-                    bhati_payments.work_date BETWEEN ? AND ?
-            ) AS combined_payments_detailed
-            WHERE
-                combined_payments_detailed.employee_id = ?
-            GROUP BY
-                source_table
-
-            UNION ALL
-
-            -- Part 2: Get the Grand Total
-            SELECT
-                'Grand Total' AS source_of_payment,
-                SUM(amount_paid) AS amount
-            FROM (
-                -- Payments from weekly_attendance
-                SELECT
-                    eid AS employee_id,
-                    amount_payable AS amount_paid
-                FROM
-                    weekly_attendance
-                WHERE
-                    (week_start BETWEEN ? AND ?) OR (week_end BETWEEN ? AND ?)
-                
-                UNION ALL
-
-                -- Payments from packing_payments
-                SELECT
-                    employee_id,
-                    amount_to_pay AS amount_paid
-                FROM
-                    packing_payments
-                WHERE
-                    work_date BETWEEN ? AND ?
-
-                UNION ALL
-
-                -- Payments from bullblock_payments
-                SELECT
-                    employee_id,
-                    amount_to_pay AS amount_paid
-                FROM
-                    bullblock_payments
-                WHERE
-                    work_date BETWEEN ? AND ?
-
-                UNION ALL
-
-                -- Payments from loading_unloading_payments (parsing JSON for employee_ids)
-                SELECT
-                    CAST(json_each.value AS INTEGER) AS employee_id,
-                    amount_to_pay AS amount_paid
-                FROM
-                    loading_unloading_payments
-                JOIN json_each(loading_unloading_payments.employee_ids)
-                WHERE
-                    loading_unloading_payments.work_date BETWEEN ? AND ?
-
-                UNION ALL
-
-                -- Payments from bhati_payments (parsing JSON for employee_ids)
-                SELECT
-                    CAST(json_each.value AS INTEGER) AS employee_id,
-                    amount_to_pay AS amount_paid
-                FROM
-                    bhati_payments
-                JOIN json_each(bhati_payments.employee_ids)
-                WHERE
-                    bhati_payments.work_date BETWEEN ? AND ?
-            ) AS combined_payments_total
-            WHERE
-                combined_payments_total.employee_id = ?
-        ) AS final_results
-        ORDER BY
-            CASE WHEN source_of_payment = 'Grand Total' THEN 1 ELSE 0 END, -- Puts 'Grand Total' at the very bottom
-            source_of_payment;
-    `;
-
-    // The parameters need to be repeated for each subquery in the UNION ALL
-    const params = [
-        startDate, endDate, startDate, endDate, // weekly_attendance (part 1)
-        startDate, endDate, // packing_payments (part 1)
-        startDate, endDate, // bullblock_payments (part 1)
-        startDate, endDate, // loading_unloading_payments (part 1)
-        startDate, endDate, // bhati_payments (part 1)
-        eid, // employee_id filter (part 1)
-        
-        startDate, endDate, startDate, endDate, // weekly_attendance (part 2)
-        startDate, endDate, // packing_payments (part 2)
-        startDate, endDate, // bullblock_payments (part 2)
-        startDate, endDate, // loading_unloading_payments (part 2)
-        startDate, endDate, // bhati_payments (part 2)
-        eid // employee_id filter (part 2)
-    ];
-     
-
-    db.all(query, params, callback);
+        Promise.all([weeklyPromise, bhatiPromise, drawMachinePromise, luPromise, miscPromise])
+            .then(([weeklyPayments, bhatiPayments, drawMachinePayments, loadingUnloadingPayments, miscPayments]) => {
+                resolve({
+                    weeklyPayments,
+                    bhatiPayments,
+                    drawMachinePayments,
+                    loadingUnloadingPayments,
+                    miscPayments
+                });
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
 }
+// function getEmployeePaymentDetails(employeeId, startDate, endDate) {
+//     return new Promise((resolve, reject) => {
+//         db.serialize(() => {
+//             const results = {
+//                 weeklyPayments: [],
+//                 bhatiPayments: [],
+//                 drawMachinePayments: [],
+//                 loadingUnloadingPayments: [],
+//                 miscPayments: []
+//             };
 
+//             const checkAndResolve = () => {
+//                 const allQueriesDone = Object.values(results).every(arr => arr !== null);
+//                 if (allQueriesDone) {
+//                     resolve(results);
+//                 }
+//             };
+
+//             // Query for weekly payments
+//             db.all(
+//                 'SELECT * FROM weekly_payments WHERE eid = ? AND week_start BETWEEN ? AND ?',
+//                 [employeeId, startDate, endDate],
+//                 (err, rows) => {
+//                     if (err) return reject(err);
+//                     results.weeklyPayments = rows;
+//                     checkAndResolve();
+//                 }
+//             );
+
+//             // Query for bhati payments
+//             db.all(
+//                 'SELECT * FROM bhati_payments WHERE employee_id = ? AND week_start BETWEEN ? AND ?',
+//                 [employeeId, startDate, endDate],
+//                 (err, rows) => {
+//                     if (err) return reject(err);
+//                     results.bhatiPayments = rows;
+//                     checkAndResolve();
+//                 }
+//             );
+
+//             // Query for draw machine payments
+//             db.all(
+//                 'SELECT * FROM draw_machine_payments WHERE employee_id = ? AND work_date BETWEEN ? AND ?',
+//                 [employeeId, startDate, endDate],
+//                 (err, rows) => {
+//                     if (err) return reject(err);
+//                     results.drawMachinePayments = rows;
+//                     checkAndResolve();
+//                 }
+//             );
+
+//             // Query for loading/unloading payments using the junction table
+//             const luQuery = `
+//                 SELECT l.*
+//                 FROM loading_unloading_payments l
+//                 JOIN loading_unloading_employees le ON l.ul_id = le.ul_id
+//                 WHERE le.eid = ? AND l.work_date BETWEEN ? AND ?
+//             `;
+//             db.all(luQuery, [employeeId, startDate, endDate], (err, rows) => {
+//                 if (err) return reject(err);
+//                 results.loadingUnloadingPayments = rows;
+//                 checkAndResolve();
+//             });
+
+//             // Query for miscellaneous payments
+//             db.all(
+//                 'SELECT * FROM misc_payments WHERE employee_id = ? AND work_date BETWEEN ? AND ?',
+//                 [employeeId, startDate, endDate],
+//                 (err, rows) => {
+//                     if (err) return reject(err);
+//                     results.miscPayments = rows;
+//                     checkAndResolve();
+//                 }
+//             );
+//         });
+//     });
+// }
 
 
 
