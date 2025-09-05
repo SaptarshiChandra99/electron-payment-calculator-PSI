@@ -138,7 +138,8 @@ let dropdownList;
 async function loadEmployees(position) {
     try {
         //allEmployees = await window.electronAPI.getLabourEmployees();
-        allEmployees = await window.electronAPI.getActiveEmployeesByPosition(position);
+        const include = { column : 'position' , data : position};
+        allEmployees = await window.electronAPI.getActiveEmployeesByPosition(include);
         if (dropdownList) {
             dropdownList.innerHTML = '';
         }

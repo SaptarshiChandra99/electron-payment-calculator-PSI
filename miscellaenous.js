@@ -11,11 +11,14 @@ document.addEventListener("DOMContentLoaded" , function(){
     }
 
     async function loadAllEmployees(){
-        loadItems('employee' , '');
+       // const include = { column : 'payment_mode' , data : 'weekly'};      
+       // const exclude = { column : 'position' , data : 'draw machine'};  
+        loadItems('employee' );
     }
 
     async function loadManagerEmployees(){
-        loadItems('paid-by' , 'manager');
+        const include = { column : 'position' , data : 'manager'};
+        loadItems('paid-by' , include );
     }
 
      // Tab functionality

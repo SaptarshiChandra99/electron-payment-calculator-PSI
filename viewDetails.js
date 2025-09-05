@@ -1,10 +1,12 @@
 // viewDetailsRenderer.js
 
+import { loadItems } from "./utils.js";
+
 // viewDetailsRenderer.js
 
 document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('view-payment-details-form');
-    const employeeSelect = document.getElementById('employee-select');
+    const employeeSelect = document.getElementById('employee');
     const startDateInput = document.getElementById('start-date');
     const endDateInput = document.getElementById('end-date');
     const errorMessageDiv = document.getElementById('view-details-error');
@@ -13,19 +15,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Function to load employees into the select dropdown
     async function loadEmployees() {
-        try {
-            const employees = await window.electronAPI.getAllEmployees();
-            employeeSelect.innerHTML = '<option value="">Select an Employee</option>'; // Default option
-            employees.forEach(employee => {
-                const option = document.createElement('option');
-                option.value = employee.eid;
-                option.textContent = `${employee.nickname} (${employee.position})`; // Display nickname and position
-                employeeSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Failed to load employees:', error);
-            errorMessageDiv.textContent = 'Failed to load employees: ' + error.message;
-        }
+      
+        loadItems('employee'  );
+        
     }
 
     // Set default dates to current month

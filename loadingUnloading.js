@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded" , function(){
     let currentUlId = null;
 
 
-    async function loadManagerEmployees() {    loadItems('paid-by','manager');   }
+    async function loadManagerEmployees() {    
+        const include = { column : 'position' , data : 'manager'};
+        await loadItems('paid-by' , include );
+    }
 
     // Tab functionality
     const tabBtns = document.querySelectorAll('.tab-btn');

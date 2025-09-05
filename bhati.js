@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
+    async function loadEmployees(){
+        const include = { column : 'payment_mode' , data : 'weekly'};
+        await loadItems('employee',include);
+    }
+
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const tabId = btn.getAttribute('data-tab');
@@ -32,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 else if (tabId === 'bhati-payments') {
                     console.log('Switching to Add Record tab in bhati');
-                    loadItems('employee','labour'); // Reload employees for the multi-select
+                    loadEmployees(); // Reload employees for the multi-select
                 }
                 else if (tabId === 'rate-change') {
                     console.log('Switching to Rate Change tab in bhati');
@@ -140,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentBhatiId = null; // Clear current bhati ID
                     document.getElementById('bhati-payments-form').querySelector('button[type="submit"]').textContent = 'Submit';
                     document.getElementById('cancel-edit-btn').style.display = 'none';
-                    loadItems('employee','labour');;
+                    loadEmployees();
                     setWeekRange();
                     loadRecords();
                 }
@@ -325,7 +330,8 @@ document.addEventListener('DOMContentLoaded', function() {
             setWeekRange();
             document.getElementById('bhati-payments-form').querySelector('button[type="submit"]').textContent = 'Submit';
             document.getElementById('cancel-edit-btn').style.display = 'none';
-            loadItems('employee','labour');
+            loadEmployees();
+           
         });
     
         async function editBhatiRecord(bhatiId) {
@@ -351,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 isEditMode = true;
                 currentBhatiId = bhatiId;
 
-                await loadItems('employee' , 'labour');
+                await loadEmployees();
     
                 // Populate the form
                 document.getElementById('employee').value = result.employee_id;
@@ -437,8 +443,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setWeekRange();
     setDefaultFilterDates(); // Set default filter dates
     loadRecords();
-    loadItems('employee','labour');
-    loadItems('paid-by','manager');
+    loadEmployees();
+    loadItems('paid-by',{ column : 'position' , data : 'manager'});
     
 
 });

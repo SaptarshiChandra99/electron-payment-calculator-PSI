@@ -47,8 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('work-date').value = workDate;
 
    async function loadEmployees() {
+    const include = { column : 'position' , data : 'draw machine'};
     try {
-        await loadItems('employee', 'draw machine');
+        await loadItems('employee', include);
         console.log('Employees loaded successfully for Bull Block tab');
     } catch (error) {
         console.error('Error loading employees:', error);
