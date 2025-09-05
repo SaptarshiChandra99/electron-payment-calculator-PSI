@@ -21,7 +21,7 @@
       getAllEmployees: (eid,position) => ipcRenderer.invoke('db:getAllEmployees',eid,position),
       getAllEmployeesActive: () => ipcRenderer.invoke('db:getAllEmployeesActive'),
       getUnpaidEmployees: (weekStart) => ipcRenderer.invoke('db:getUnpaidEmployees', weekStart),
-      getActiveEmployeesByPosition: (position) => ipcRenderer.invoke('db:getActiveEmployeesByPosition', position),
+      getActiveEmployeesByPosition: (include , exclude) => ipcRenderer.invoke('db:getActiveEmployeesByPosition', include , exclude),
       getEmployeeById: (eid) => ipcRenderer.invoke('db:getEmployeeById', eid),
       getManagerEmployees: () => ipcRenderer.invoke('db:getManagerEmployees'),
       getLabourEmployees: () => ipcRenderer.invoke('db:getLabourEmployees'),

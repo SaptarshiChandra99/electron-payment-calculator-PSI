@@ -213,9 +213,9 @@ ipcMain.handle('db:getManagerEmployees', async (event) => {
     });
 });
 
-ipcMain.handle('db:getActiveEmployeesByPosition' , async (event,position) => {
+ipcMain.handle('db:getActiveEmployeesByPosition' , async (event,include ,exclude) => {
     return new Promise((resolve, reject) => {
-        db.getActiveEmployeesByPosition(position, (err, rows) => {
+        db.getActiveEmployeesByPosition(include , exclude, (err, rows) => {
             if (err) reject(err);
             else resolve(rows);
         });

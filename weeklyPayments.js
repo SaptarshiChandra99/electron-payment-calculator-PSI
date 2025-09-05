@@ -155,7 +155,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function loadAllEmployees() {         loadItems('employee' , 'labour');     }
+    async function loadAllEmployees() {   
+     //   console.log('load all employees called');
+        const include = { column : 'payment_mode' , data : 'weekly'};      
+        const exclude = { column : 'position' , data : 'draw machine'};      
+        await loadItems('employee',include , exclude);     
+    }
 
     async function loadYearFilters(defaultYear = '') {
         try {

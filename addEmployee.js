@@ -25,8 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const rate_6 = parseFloat(document.getElementById('rate6').value);
             const rate_7 = parseFloat(document.getElementById('rate7').value);
             const benefits = document.getElementById('benefits').checked;
+            const payment_mode = document.getElementById('payment-mode').value;
 
-            console.log('Adding employee:', { fullname, nickname, mobile, position, rate_6, rate_7, benefits });
+            console.log('Adding employee:', { fullname, nickname, mobile, position, rate_6, rate_7, benefits,payment_mode });
 
             // Validate inputs
             if (!fullname || !nickname || !mobile || !position || isNaN(rate_6) || isNaN(rate_7)) {
@@ -42,7 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     position,
                     rate_6,
                     rate_7,
-                    has_benefits: benefits
+                    has_benefits: benefits,
+                    payment_mode
                 });
                 showMessageBox('Employee added successfully!');
                 this.reset(); // Clear the form
@@ -119,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${emp.rate_7.toFixed(2)}</td>
                     <td>${emp.has_benefits ? 'Yes' : 'No'}</td>
                     <td>${emp.is_active ? 'Yes' : 'No'}</td>
+                    <td>${emp.payment_mode}</td>
                     <td><button class="delete-btn" data-eid="${emp.eid}">Delete</button></td>
                 `;
                 recordsTableBody.appendChild(row);
@@ -173,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const updateRate7 = document.getElementById('update-rate7');
     const updateBenefits = document.getElementById('update-benefits');
     const updateIsActive = document.getElementById('update-is-active');
+    const updatePaymentMode = document.getElementById('update-payment-mode');
 
 
     async function loadEmployees(dropdownId ) {
@@ -211,7 +215,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateRate6.value = employee.rate_6;
                         updateRate7.value = employee.rate_7;
                         updateBenefits.checked = employee.has_benefits;
-                        updateIsActive.checked = employee.is_active
+                        updateIsActive.checked = employee.is_active;
+                        updatePaymentMode.value = employee.payment_mode;
 
                     } else {
                         showMessageBox('Employee not found.');
@@ -239,27 +244,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const updatedEmployeeData = {
-                eid: selectedEid,
-                fullname: updateFullname.value,
+             const mainTable = 'employees';
+             const mainTableColumns = ['eid','Name','nickname','mobile_no','position','rate_6','rate_7',
+                'has_benefits','is_active','payment_mode'];
+             const mainIdColumn = 'eid';   
+
+            const data = {
+                Name: updateFullname.value,
                 nickname: updateNickname.value,
                 mobile_no: updateMobile.value,
                 position: updatePosition.value,
                 rate_6: parseFloat(updateRate6.value),
                 rate_7: parseFloat(updateRate7.value),
                 has_benefits: updateBenefits.checked,
-                is_active: updateIsActive.checked
+                is_active: updateIsActive.checked,
+                payment_mode : updatePaymentMode.value,
             };
 
             // Validate inputs
-            if (!updatedEmployeeData.fullname || !updatedEmployeeData.nickname || !updatedEmployeeData.mobile_no || 
-                !updatedEmployeeData.position || isNaN(updatedEmployeeData.rate_6) || isNaN(updatedEmployeeData.rate_7)) {
+            if (!data.Name || !data.nickname || !data.mobile_no || 
+                !data.position || isNaN(data.rate_6) || isNaN(data.rate_7)) {
                 showMessageBox('Please fill all required fields with valid data for update.');
                 return;
             }
 
             try {
-                const changes = await window.electronAPI.updateEmployee(updatedEmployeeData); // New IPC call
+                const changes = await window.electronAPI.updateRecord({mainTable,mainIdColumn,id:selectedEid,data}); // New IPC call
                 if (changes > 0) {
                     showMessageBox('Employee updated successfully!');
                     updateEmployeeForm.reset(); // Clear the form

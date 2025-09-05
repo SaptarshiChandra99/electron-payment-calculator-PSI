@@ -54,10 +54,11 @@ export function searchItem(searchId , quary, cellNo){
         
     }
 
-export async function loadItems(dropdownId ,position ){
+export async function loadItems(dropdownId ,include , exclude ){
 
     try{
-        const employees = await window.electronAPI.getActiveEmployeesByPosition(position);
+        console.log('Loading Employees for dropdown:', dropdownId, include , exclude);
+        const employees = await window.electronAPI.getActiveEmployeesByPosition(include , exclude);
         const dropdown = document.getElementById(dropdownId);
         dropdown.innerHTML = '<option value="">Select Employee</option>';
         employees.forEach(emp => {

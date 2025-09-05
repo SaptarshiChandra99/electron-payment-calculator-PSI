@@ -29,6 +29,7 @@ db.serialize(() => {
             rate_7 REAL NOT NULL,
             has_benefits BOOLEAN NOT NULL DEFAULT 0,
             is_active BOOLEAN DEFAULT 1,
+            payment_mode check(payment_mode in ('weekly' , 'monthly')) DEFAULT 'weekly',
             creation_date DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `);
@@ -349,15 +350,19 @@ function getLabourEmployees(callback) {
     db.all('SELECT * FROM employees WHERE position = "Labour" and is_active = 1', [], callback);  
 }  
 
-function getActiveEmployeesByPosition(position,callback){
+function getActiveEmployeesByPosition(include,exclude , callback){
     quary = 'SELECT * FROM EMPLOYEES WHERE is_active = 1';
     params = [];
-    if (position != '') {
-         quary  +=  ' AND position = ? '
-         params.push(position);
+    if (include) {
+         quary  +=  ' AND ' + include.column + ' = ? ';
+         params.push(include.data);
+    }
+    if(exclude){
+        quary += ' AND ' + exclude.column + ' != ? ';
+        params.push(exclude.data);
     }
        
-    //db.all('SELECT * FROM EMPLOYEES WHERE POSITION = ? AND is_active = 1', [position], callback);
+    console.log('quary:' , quary , ' params : ' , params);
     db.all(quary,params,callback);
 }
 
