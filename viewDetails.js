@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Function to load employees into the select dropdown
     async function loadEmployees() {
       
-        loadItems('employee'  );
+        await loadItems('employee'  );
         
     }
 
@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 endDate
             );
 
+            console.log('Fetched payment details:', details);
+
             if (details) {
                 renderPaymentDetails(details);
             } else {
@@ -81,7 +83,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         list.className = 'payment-summary-list';
 
         for (const [type, records] of Object.entries(summaryData)) {
-            const sum = records.reduce((acc, record) => acc + (record.amount_to_pay || record.amount), 0);
+            let sum  = 0;
+            if(type === 'Loading/Unloading Payments'){
+                sum = records.reduce((acc, record) => acc + (record.employee_share || record.amount), 0);
+            }else
+                sum = records.reduce((acc, record) => acc + (record.amount_to_pay || record.amount), 0);
             total += sum;
 
             const listItem = document.createElement('li');
@@ -155,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             case 'Draw Machine Payments':
                 return ['Date', 'Machine No.', 'Gauge', 'Weight', 'Amount to Pay'];
             case 'Loading/Unloading Payments':
-                return ['Date', 'Lorry Number', 'Type', 'Weight', 'Amount to Pay'];
+                return ['Date', 'Lorry Number', 'Type', 'Weight', 'Amount to Pay' , 'Share'];
             case 'Miscellaneous Payments':
                 return ['Date', 'Description', 'Amount'];
             default:
@@ -176,7 +182,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const drawMap = {'Date': 'work_date', 'Machine No.': 'machine_no', 'Gauge': 'gauge', 'Weight': 'weight', 'Amount to Pay': 'amount_to_pay'};
                 return drawMap[column];
             case 'Loading/Unloading Payments':
-                const luMap = {'Date': 'work_date', 'Lorry Number': 'lorry_number', 'Type': 'type', 'Weight': 'weight', 'Amount to Pay': 'amount_to_pay'};
+                const luMap = {'Date': 'work_date', 'Lorry Number': 'lorry_number', 'Type': 'type', 'Weight': 'weight', 'Amount to Pay': 'amount_to_pay' , 'Share' : 'employee_share'};
                 return luMap[column];
             case 'Miscellaneous Payments':
                 const miscMap = {'Date': 'work_date', 'Description': 'description', 'Amount': 'amount'};

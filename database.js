@@ -1017,12 +1017,20 @@ function getEmployeePaymentDetails(employeeId, startDate, endDate) {
         });
 
         const luPromise = new Promise((res, rej) => {
-            const luQuery = `
-                SELECT l.*
-                FROM loading_unloading_payments l
-                JOIN loading_unloading_employees le ON l.ul_id = le.ul_id
-                WHERE le.eid = ? AND l.work_date BETWEEN ? AND ?
-            `;
+            // const luQuery = `
+            //     SELECT l.*
+            //     FROM loading_unloading_payments l
+            //     JOIN loading_unloading_employees le ON l.ul_id = le.ul_id
+            //     WHERE le.eid = ? AND l.work_date BETWEEN ? AND ?
+            // `;
+
+            const luQuery =  
+                `SELECT lu.*,
+                ROUND ((lu.amount_to_pay - lu.paid_to_pwi) / (SELECT COUNT(*) FROM loading_unloading_employees lue2 
+                WHERE lue2.ul_id = lu.ul_id), 0) AS employee_share
+                FROM loading_unloading_payments lu
+                JOIN loading_unloading_employees lue ON lu.ul_id = lue.ul_id
+                WHERE lue.eid = ? AND lu.work_date BETWEEN ? AND ? order by lu.work_date `     ;
             db.all(luQuery, [employeeId, startDate, endDate], (err, rows) => {
                 if (err) rej(err);
                 else res(rows);

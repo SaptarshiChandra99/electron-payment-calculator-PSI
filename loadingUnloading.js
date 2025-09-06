@@ -92,6 +92,7 @@ document.addEventListener("DOMContentLoaded" , function(){
         const paidBy = document.getElementById('paid-by').value;
         const remarks = document.getElementById('remarks').value;
         const payment_date = document.getElementById('payment-date').value;
+        const paid_to_pwi = parseFloat(document.getElementById('paid-to-pwi').value) || 0;
 
         // Validate inputs
         if (!workDate || selectedEmployeeIds.length === 0 || !type || isNaN(weight) || isNaN(amountToPay)) {
@@ -102,7 +103,8 @@ document.addEventListener("DOMContentLoaded" , function(){
         
         const mainTable = 'loading_unloading_payments';
         const junctionTable = 'loading_unloading_employees';
-        const mainTableColumns = ['work_date','lorry_number','type','weight','rate','amount_to_pay','paid_by','remarks','payment_date'];
+        const mainTableColumns = ['work_date','lorry_number','type','weight','rate',
+            'amount_to_pay','paid_by','remarks','payment_date' , 'paid_to_pwi'];
         const data = {
             work_date: workDate,
             lorry_number: lorry_no,
@@ -112,7 +114,8 @@ document.addEventListener("DOMContentLoaded" , function(){
             amount_to_pay:amountToPay,
             paid_by: paidBy,
             remarks:remarks,
-            payment_date:payment_date
+            payment_date:payment_date,
+            paid_to_pwi: paid_to_pwi
         }
         const junctionRefColumn = 'ul_id', junctionFkColumn = 'eid';
         const junctionFkValues = selectedEmployeeIds;
@@ -348,6 +351,7 @@ document.addEventListener("DOMContentLoaded" , function(){
             document.getElementById('paid-by').value = record.paid_by;
             document.getElementById('remarks').value = record.remarks;
             document.getElementById('payment-date').value = record.payment_date;
+            document.getElementById('paid-to-pwi').value = record.paid_to_pwi || 0;
 
             document.getElementById('cancel-edit-btn').style.display = 'inline-block';
 
