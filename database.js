@@ -34,18 +34,18 @@ db.serialize(() => {
         )
     `);
 
-    // db.run(`
-    //         CREATE TABLE IF NOT EXISTS attendance (
-    //         id INTEGER PRIMARY KEY AUTOINCREMENT, -- Auto-incrementing primary key
-    //         employee_id INTEGER NOT NULL,           -- Foreign key referencing employees(eid)
-    //         work_date DATE NOT NULL,
-    //         attendance_type TEXT NOT NULL,       -- Stores comma-separated values like 'D,N,L' or 'A'
-    //         overtime REAL DEFAULT 0.0,           -- REAL for floating-point numbers (e.g., 0.5, 1.0)
-    //         duty REAL DEFAULT 0.0,               -- REAL for floating-point numbers
-    //         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    //         FOREIGN KEY (employee_id) REFERENCES employees(eid), -- 
-    //         UNIQUE (employee_id, work_date)   );   -- Enforces one attendance record per employee per day
-    //     `);
+    db.run(`
+            CREATE TABLE IF NOT EXISTS attendance (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, -- Auto-incrementing primary key
+            employee_id INTEGER NOT NULL,           -- Foreign key referencing employees(eid)
+            work_date DATE NOT NULL,
+            attendance_type TEXT NOT NULL,       -- Stores comma-separated values like 'D,N,V' or 'A'
+            overtime REAL DEFAULT 0.0,           -- REAL for floating-point numbers (e.g., 0.5, 1.0)
+            duty REAL DEFAULT 0.0,               -- REAL for floating-point numbers
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (employee_id) REFERENCES employees(eid), -- 
+            UNIQUE (employee_id, work_date)   );   -- Enforces one attendance record per employee per day
+        `);
 
     
     // Create weekly attendance table
@@ -362,7 +362,7 @@ function getActiveEmployeesByPosition(include,exclude , callback){
         params.push(exclude.data);
     }
        
-    console.log('quary:' , quary , ' params : ' , params);
+  //  console.log('quary:' , quary , ' params : ' , params);
     db.all(quary,params,callback);
 }
 
@@ -1051,84 +1051,6 @@ function getEmployeePaymentDetails(employeeId, startDate, endDate) {
             });
     });
 }
-// function getEmployeePaymentDetails(employeeId, startDate, endDate) {
-//     return new Promise((resolve, reject) => {
-//         db.serialize(() => {
-//             const results = {
-//                 weeklyPayments: [],
-//                 bhatiPayments: [],
-//                 drawMachinePayments: [],
-//                 loadingUnloadingPayments: [],
-//                 miscPayments: []
-//             };
-
-//             const checkAndResolve = () => {
-//                 const allQueriesDone = Object.values(results).every(arr => arr !== null);
-//                 if (allQueriesDone) {
-//                     resolve(results);
-//                 }
-//             };
-
-//             // Query for weekly payments
-//             db.all(
-//                 'SELECT * FROM weekly_payments WHERE eid = ? AND week_start BETWEEN ? AND ?',
-//                 [employeeId, startDate, endDate],
-//                 (err, rows) => {
-//                     if (err) return reject(err);
-//                     results.weeklyPayments = rows;
-//                     checkAndResolve();
-//                 }
-//             );
-
-//             // Query for bhati payments
-//             db.all(
-//                 'SELECT * FROM bhati_payments WHERE employee_id = ? AND week_start BETWEEN ? AND ?',
-//                 [employeeId, startDate, endDate],
-//                 (err, rows) => {
-//                     if (err) return reject(err);
-//                     results.bhatiPayments = rows;
-//                     checkAndResolve();
-//                 }
-//             );
-
-//             // Query for draw machine payments
-//             db.all(
-//                 'SELECT * FROM draw_machine_payments WHERE employee_id = ? AND work_date BETWEEN ? AND ?',
-//                 [employeeId, startDate, endDate],
-//                 (err, rows) => {
-//                     if (err) return reject(err);
-//                     results.drawMachinePayments = rows;
-//                     checkAndResolve();
-//                 }
-//             );
-
-//             // Query for loading/unloading payments using the junction table
-//             const luQuery = `
-//                 SELECT l.*
-//                 FROM loading_unloading_payments l
-//                 JOIN loading_unloading_employees le ON l.ul_id = le.ul_id
-//                 WHERE le.eid = ? AND l.work_date BETWEEN ? AND ?
-//             `;
-//             db.all(luQuery, [employeeId, startDate, endDate], (err, rows) => {
-//                 if (err) return reject(err);
-//                 results.loadingUnloadingPayments = rows;
-//                 checkAndResolve();
-//             });
-
-//             // Query for miscellaneous payments
-//             db.all(
-//                 'SELECT * FROM misc_payments WHERE employee_id = ? AND work_date BETWEEN ? AND ?',
-//                 [employeeId, startDate, endDate],
-//                 (err, rows) => {
-//                     if (err) return reject(err);
-//                     results.miscPayments = rows;
-//                     checkAndResolve();
-//                 }
-//             );
-//         });
-//     });
-// }
-
 
 
 module.exports = {

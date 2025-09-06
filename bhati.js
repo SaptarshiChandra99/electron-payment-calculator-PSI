@@ -70,6 +70,14 @@ document.addEventListener('DOMContentLoaded', function() {
         weekEndInput.value = end;
     }
 
+    document.getElementById('week-start').addEventListener('change', async () => {
+        const startDate = new Date(weekStartInput.value);
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
+        weekEndInput.value = endDate.toISOString().split('T')[0];
+        
+    });
+
     const bhatiDutyInput = document.getElementById('bhati-duty');
     const rateInput = document.getElementById('bhati-rate');
     const amountToPayInput = document.getElementById('amount-to-pay');
